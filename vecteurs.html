@@ -1,0 +1,257 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="Anne de Miranda">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+   <TITLE>vecteurs</TITLE>
+</HEAD>
+<BODY TEXT="#993300" BGCOLOR="#FFFFCC" LINK="#000066" VLINK="#551A8B" ALINK="#3366FF">
+
+<CENTER>
+<H1>
+<A NAME="Vecteurs"></A>Vecteurs</H1></CENTER>
+
+
+<P>Par d&eacute;faut, chart trace des vecteurs d&egrave;s que des donn&eacute;es
+sont sp&eacute;cifi&eacute;es avec l’une des options <B>–vecdataXX</B>.
+Comme les vecteurs comportent plusieurs composantes, l’entr&eacute;e de
+donn&eacute;es peut s’effectuer de plusieurs fa&ccedil;ons. On peut sp&eacute;cifier
+les donn&eacute;es dimension par dimension, auquel cas chaque fichier bimg
+contient une composante, ou bien on peut d&eacute;finir le bimg comme contenant
+plusieurs dimensions.
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER WIDTH="100%" >
+<CAPTION><A NAME="Fichiers"></A><B>Fichiers</B></CAPTION>
+
+<TR>
+<TD>-<B><A HREF="#vecdatax">vecdatax</A></B> fichier</TD>
+
+<TD>d&eacute;finit la composante x des vecteurs &agrave; tracer</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vectdatay">vecdatay</A> </B>fichier</TD>
+
+<TD>d&eacute;finit la composante y des vecteurs &agrave; tracer</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecdataxy">vecdataxy</A> </B>fichier</TD>
+
+<TD>les composantes X et Y sont lues d’un m&ecirc;me fichier</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecdatapsi">vecdatapsi</A></B> fichier</TD>
+
+<TD>&nbsp;fonction de courant desquelles seront d&eacute;riv&eacute;s les
+vecteurs.</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecmask">vecmask</A></B> fichier</TD>
+
+<TD>Permet de masquer une partie des donn&eacute;es</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecgrid">vecgrid</A></B> fichier</TD>
+
+<TD>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#veclim">veclim</A></B> fichier</TD>
+
+<TD>Limites utilis&eacute;es pour la coloration des vecteurs</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecout">vecout</A></B> fichier</TD>
+
+<TD>fichier des limites calcul&eacute;es par chart</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<TABLE BORDER WIDTH="100%" >
+<CAPTION><A NAME="Coloration des vecteurs"></A><B>Coloration des vecteurs</B></CAPTION>
+
+<TR>
+<TD>-<B>vecclrmod</B></TD>
+
+<TD>Chart colorera les vecteurs selon leur module</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecclr">vecclr</A></B></TD>
+
+<TD>les vecteurs sont colori&eacute;s selon le champ de scalaire sp&eacute;cifi&eacute;
+par -<B>clrdata</B></TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#vecmet">vecmet</A></B> [<I>1</I> ou <I>2</I>]</TD>
+
+<TD>Choix de la m&eacute;thode de calcul des limites</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<TABLE BORDER WIDTH="100%" >
+<CAPTION><A NAME="Texte"></A><B><A HREF="#Note">Texte d'information</A></B></CAPTION>
+
+<TR>
+<TD>-<B>vecmns</B> real</TD>
+
+<TD>Taille des caract&egrave;res du vecteur minimum</TD>
+</TR>
+
+<TR>
+<TD>-<B>vecmxs</B> real</TD>
+
+<TD>taille des caract&egrave;res du vecteur maximum</TD>
+</TR>
+
+<TR>
+<TD>-<B>vecmnt</B> string</TD>
+
+<TD>Cha&icirc;nes de caract&egrave;res du bloc de texte du vecteur minimum</TD>
+</TR>
+
+<TR>
+<TD>-<B>vecmxt</B> string</TD>
+
+<TD>Cha&icirc;nes de caract&egrave;res des blocs de texte du vecteur maximum</TD>
+</TR>
+
+<TR>
+<TD>-<B>vecmnxy</B> real real</TD>
+
+<TD>Coordonn&eacute;es du bloc de texte du vecteur minimum</TD>
+</TR>
+
+<TR>
+<TD>-<B>vecmxxy</B> real real</TD>
+
+<TD>Coordonn&eacute;es du bloc de texte du vecteur maximum</TD>
+</TR>
+
+<TR>
+<TD>-vecmnp integer</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>-vecmxp integer</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+
+<P>-<A NAME="vecdatax"></A><B>vecdatax</B> <I>fichier</I>
+<BR>-<A NAME="vectdatay"></A><B>vectdatay</B> <I>fichier</I>
+<BR>D&eacute;finissent les composantes X et Y des vecteurs &agrave; tracer.
+La Ne couche au temps t (d&eacute;finie par <B><A HREF="general.html#-lev">–lev</A></B>
+et <B><A HREF="general.html#-time">–time</A></B>) de chaque fichier est
+lue et les composantes sont assembl&eacute;es pour former les vecteurs.
+
+<P>-<A NAME="vecdataxy"></A><B>vecdataxy</B> <I>fichier</I>
+<BR>Les composantes X et Y sont lues d’un m&ecirc;me fichier. A la Ne couche
+et au temps t (d&eacute;finis par <B><A HREF="general.html#-lev">–lev</A></B>
+et <B><A HREF="general.html#-time">–time</A></B>), les dimensions 1 et
+2 sont assembl&eacute;es pour former les vecteurs.
+
+<P>-<A NAME="vecdatapsi"></A><B>vecdatapsi</B> <I>fichier</I>
+<BR>Le fichier sp&eacute;cifi&eacute; contient des donn&eacute;es de fonction
+de courant desquelles seront d&eacute;riv&eacute;s les vecteurs.
+
+<P>-<A NAME="vecmask"></A><B>vecmask</B> <I>fichier</I>
+<BR>Permet de masquer une partie des donn&eacute;es. Les points de grille
+masqu&eacute;s sont remplac&eacute;s par une valeur sp&eacute;ciale et
+ne sont pas pris en compte lors des calculs. (voir aussi l’option <B><A HREF="general.html#-mask">–mask</A></B>)
+
+<P>-<A NAME="vecgrid"></A><B>vecgrid</B> <I>fichier</I>
+<BR>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re.
+Le fichier de grille contient les coordonn&eacute;es de chaque point du
+fichier sp&eacute;cifi&eacute; par <B>–vecdata</B>. (voir aussi l’option
+<B><A HREF="general.html#-grid">–grid</A></B>)
+
+<P>-<A NAME="veclim"></A><B>veclim</B> <I>fichier</I>
+<BR>Limites utilis&eacute;es pour la coloration des vecteurs. Voir la section
+6.2 sur les couleurs, pour plus de d&eacute;tails sur le calcul des limites.
+
+<P>-<A NAME="vecout"></A><B>vecout</B> <I>fichier</I>
+<BR>Lorsque les limites sont calcul&eacute;es par chart, cette option permet
+de les r&eacute;cup&eacute;rer dans un fichier. Attention, cette option
+&eacute;crasera le fichier donn&eacute; en argument s’il existe d&eacute;j&agrave;.
+<BR>
+<HR WIDTH="100%">
+<H3>
+Couleurs</H3>
+
+
+<P>-<A NAME="vecclr"></A><B>vecclr</B>
+<BR>Chart colorera les vecteurs selon le champ de scalaires de <B><A HREF="couleurs.html#clrdata">–clrdata</A></B>.
+Les couleurs et les limites utilis&eacute;es seront celles du bloc de couleurs
+et le trac&eacute; des couleurs sera d&eacute;sactiv&eacute;.
+
+<P>-<A NAME="vecmet"></A><B>vecmet</B> [1 ou 2]
+<BR>Deux m&eacute;thodes de calcul des limites sont disponibles.
+<BLOCKQUOTE>M&eacute;thode 1 : chart trouve les valeurs minimale et maximale
+du champ de donn&eacute;es et divise la plage de valeurs par le nombre
+de couleurs.(m&eacute;thode lin&eacute;aire)</BLOCKQUOTE>
+
+<BLOCKQUOTE>M&eacute;thode 2 : chart proc&egrave;de par &eacute;galisation,
+de fa&ccedil;on &agrave; attribuer une quantit&eacute; &eacute;gale de
+points de grille &agrave; chaque couleur. (m&eacute;thode &eacute;galis&eacute;e)</BLOCKQUOTE>
+Il est aussi possible de forcer les limites &agrave; certaines valeurs
+au moyen d’un fichier. (voir l’option <B><A HREF="#veclim">–vectlim</A></B>)
+<H3>
+
+<HR WIDTH="100%"></H3>
+
+<H3>
+Texte d'information</H3>
+<A NAME="Note"></A>Note :&nbsp; La plupart des options suivantes ne sont,
+en fait, qu’un acc&egrave;s direct &agrave; certaines constantes de NCAR
+graphics. Veuillez vous r&eacute;f&eacute;rer au document &laquo; Vectors,
+a vector field plotting utility &raquo; pp. 31 &agrave; 56 pour plus de
+d&eacute;tails. Lorsqu’une option correspond directement &agrave; une constante
+NCAR, le nom de la constante est indiqu&eacute;.
+
+<P>Deux blocs de texte sont affich&eacute;s par d&eacute;faut. Ils indiquent
+la taille des vecteurs minimum et maximum, selon le format ci-dessous :
+
+<P>Les options suivantes permettent de modifier le contenu et la position
+des textes. Notez que dans les noms d’options, <I>mn</I> r&eacute;f&egrave;re
+au vecteur minimum et <I>mx </I>au vecteur maximum.
+
+<P>-<B>vecmns</B> <I>real</I>
+<BR>-<B>vecmxs</B> <I>real</I>
+<BR>Text Bloc Character Size (MNS et MXS).Taille des caract&egrave;res
+utilis&eacute;s dans les blocs de texte.
+
+<P>-<B>vecmnt</B> <I>string</I>
+<BR>-<B>vecmxt</B> <I>string</I>
+<BR>Vecto Text String (character*36) (MNT et MXT). Cha&icirc;nes de caract&egrave;res
+des blocs de texte. D&eacute;fauts : vecteur minimum et Vecteur maximum,
+avec une fl&egrave;che sous les valeurs. (voir plus haut)
+
+<P>-<B>vecmnxy</B> <I>real real</I>
+<BR>-<B>vecmxxy</B> <I>real real</I>
+<BR>Coordonn&eacute;es des blocs de texte. (MNX, MNY, MXX et MXY). Voir
+l’option –vecmnp pour savoir &agrave; quelle partie du texte correspondent
+les coordonn&eacute;es.
+
+<P>-<B>vecmnp</B> <I>integer</I>
+<BR>-<B>vecmxp</B> <I>integer</I>
+<BR>Vector Text Bloc Positioning (MNP et MXP).
+<BR>Indique quel point d’un bloc de texte est indiqu&eacute; par les coordonn&eacute;es
+des options pr&eacute;c&eacute;dentes.
+<BR>&nbsp;
+</BODY>
+</HTML>

@@ -1,0 +1,194 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.77 [en] (X11; U; Linux 2.4.3-20mdk i686) [Netscape]">
+   <meta name="AUTHOR" content="Jean-Marc">
+   <meta name="CREATED" content="20011123;14065100">
+   <meta name="CHANGEDBY" content="Jean-Marc">
+   <meta name="CHANGED" content="20011123;16515500">
+</head>
+<body>
+
+<h1>
+Le format BIMG</h1>
+
+<div STYLE="font-weight: medium; text-decoration: none">Le format bimg
+a &eacute;t&eacute; d&eacute;velopp&eacute; depuis 1991 dans l'&eacute;quipe
+MEOM dans le but d'uniformiser les fichiers repr&eacute;sentant des donn&eacute;es
+bi-dimensionnelle semblables aux sorties de mod&egrave;les d'oc&eacute;an,
+par exemple.</div>
+
+<div STYLE="font-weight: medium; text-decoration: none">Ce format a l'avantage
+d'&ecirc;tre compact et pratiquement autodescriptif (si on se limite &agrave;
+des grilles r&eacute;guli&egrave;res).</div>
+
+
+<p STYLE="font-weight: medium; text-decoration: none">Chaque fichier bimg
+est un fichier de type binaire, 'unformatted', cr&eacute;&eacute; par un
+programme fortran. Une ent&ecirc;te contient sur 6 records l'info concernant
+le fichier, puis sur les records suivant les donn&eacute;es proprement
+dites, stock&eacute;es sous forme de champ 2D.
+
+<p STYLE="font-weight: medium; text-decoration: none">Plutot qu'un long
+discours, je propose de de commenter un programme f77 lisant un fichier
+bimg, pour expliquer le format:
+<div STYLE="font-weight: medium; text-decoration: none"></div>&nbsp;
+
+<div STYLE="font-weight: medium; text-decoration: none"></div>&nbsp;
+
+<pre></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PROGRAM bimg_demo_lec</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IMPLICIT NONE</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER jpi,jpj,jpk,jpt,jpdim</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...PARAMETER (jpi=100m,jpj=100,jpk=20)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PARAMETER (jpt=100,jpdim=2)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CHARACTER*80 comment1, comment2, comment3, comment4</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER ni,nj,nk,nt,ndim,icod ! Real dimension of the field</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL x1, y1, dx, dy , spval ! x1 = x of point(1,1)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! y1 = y of point (1,1)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! dx = x-grid spacing</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! dy = y-grid spacing</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! spval : missing/bad/masked</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! values are supposed spval</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL dep(jpk) ! array for vertical dep</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL time(jpt) ! array for times</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL ptab(jpi,jpj,jpk,jpt,jpdim) ! data array</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! In application it can be</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! only 2D (jpi,jpj)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C various</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER numbimg ! logical unit for bimgfile</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER ji,jj,jk,jt,jdim ! loop counter</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>CCC</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>CC Open file</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>CC</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; numbimg=10</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OPEN (numbimg,file='filebimg',form='UNFORMATTED')</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Read comment lines</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) comment!</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) comment2</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) comment3</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) comment4</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Read grid dimensions</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) ni,nj,nk,nt,ndim,icod ! icod is spare</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Read grid position and special values</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) x1,y1,dx,dy,spval</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Read depth of levels</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) (dep(jk),jk=1,nk)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Enter the time loop</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO jt = 1, nt</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C read current time</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg) time(jt)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C enter vertical loop</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO jk=1,nk</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C at each level, many 'dimensions' can exists e.g. u,v,w for 3d vector</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO jdim = 1,jpdim</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Note taht the i,j loop are implicit: ! rec hold 1 2D field.</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numbimg)(( ptab(ji,jj,jk,jt,jdim),ji=1,ni),jj=1,nj)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C IF we use only 2D array, this is the place to work with the current</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C 2D field at ime jt, dep jk and dim jdim ...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre><font face="Courier, monospace"><font size=+2>C...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END DO</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END DO</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END DO</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLOSE(numbimg)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Now enjoy working with ptab ...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END</font></font></pre>
+
+<div STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Times, serif"><font size=-1>Le
+format bimg est donc tres simple &agrave; lire ou &agrave; &eacute;crire.
+Si l'on travaille avec une grille irr&eacute;guli&egrave;re, on d&eacute;finit
+cette grille dans un fichier bimg ind&eacute;pendant &aacute; 1 niveau,
+2 dim qui contient comme donn&eacute;es, sur la dimension 1, les valeurs
+x(ji,jj) et sur la dimension 2 les valeurs y(ji,jj).</font></font></div>
+
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+
+<p STYLE="margin-bottom: 0cm"><span STYLE="text-decoration: none"><span STYLE="font-weight: medium"><font face="Times, serif"><font size=-1>Le
+format bimg a &eacute;t&eacute; &eacute;tendu dans son id&eacute;e &agrave;
+des fichiers &agrave; acc&egrave;s direct: c'est le format dimg. <a href="dimg.html">Pour
+en savoir plus sur dimg</a> ...</font></font></span></span>
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

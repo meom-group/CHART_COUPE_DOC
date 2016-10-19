@@ -1,0 +1,2350 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+   <TITLE>chart_manual</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+1.&nbsp;<A NAME="Introduction"></A>Introduction</H1>
+<I>Chart</I> est un outil graphique de visualisation de donn&eacute;es
+au format BIMG bas&eacute; sur la librairie de fonctions NCAR Graphics.
+Il permet de repr&eacute;senter l’information sous forme de dessin couleur,
+d’isocontours et/ou de vecteurs et poss&egrave;de quelques options de texte.
+Il supporte aussi la plupart des projections de NCAR Graphics et peut superposer
+une carte g&eacute;ographique aux donn&eacute;es.
+
+<P><I>Chart</I> est divis&eacute; en plusieurs blocs, ind&eacute;pendants
+les uns des autres et poss&eacute;dant chacun leur entr&eacute;e de donn&eacute;es.
+Actuellement, il existe trois blocs qui traitent les couleurs, les isocontours
+et les vecteurs. Il existe aussi deux autres blocs qui s’occupent de la
+carte et du texte. Il est &agrave; noter que la configuration de la carte
+influence tous les blocs, &eacute;tant donn&eacute; que la projection choisie
+d&eacute;terminera le trac&eacute; des donn&eacute;es. Chaque bloc produit
+une partie de dessin qui sera assembl&eacute;e aux autres pour cr&eacute;er
+le dessin final.
+
+<P>Chaque entr&eacute;e peut accepter un fichier de donn&eacute;es, un
+fichier masque et un fichier grille. Comme chaque bloc est ind&eacute;pendant,
+des donn&eacute;es de masque et de grilles diff&eacute;rentes peuvent &ecirc;tre
+sp&eacute;cifi&eacute;es &agrave; chaque entr&eacute;e. Les seules restrictions
+sont qu’une zone commune doit &ecirc;tre couverte par l’ensemble des fichiers
+de donn&eacute;es et que les fichiers de grille et de masque doivent avoir
+la m&ecirc;me taille que les fichiers de donn&eacute;es auxquels ils s’appliquent.
+R&eacute;f&eacute;rez-vous &agrave; la <A HREF="#Formats">section 8</A>
+pour plus de d&eacute;tails sur le format des fichiers.
+
+<P>Les fichiers de donn&eacute;es et les options sont fournis sur la ligne
+de commande lors de l’appel de <I>chart</I>, ou peuvent se trouver dans
+un fichier de configuration. Les options relatives aux couleurs d&eacute;butent
+toutes par <B>clr</B>, aux contours par <B>cnt</B> et aux vecteurs par
+<B>vec</B>. Par exemple, pour un trac&eacute; couleur des donn&eacute;es
+du fichier topex.bimg, on taperait la ligne de commande suivante :
+<PRE>&nbsp;chart -clrdata topex.bimg</PRE>
+Pour tracer uniquement la r&eacute;gion situ&eacute;e entre -82&deg;E et
+-62&deg;E de longitude et 20&deg;N et 40&deg;N de latitude, avec la bathym&eacute;trie
+en couleur et les isocontours de topex.bimg, on taperait la ligne de commande
+suivante:
+<PRE>&nbsp; chart -clrdata bathy.bimg -cntdata topex.bimg -zoom -82 -62 20 40</PRE>
+Voici un bref aper&ccedil;u des diff&eacute;rentes possibilit&eacute;s
+de chart :
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="20%">Couleur :</TD>
+
+<TD VALIGN=TOP>par d&eacute;faut, <I>chart</I> utilise une palette de couleur
+interne, qui d&eacute;finit la couleur des mers, des continents, etc. Il
+est possible de d&eacute;finir sa propre palette et de la fournir &agrave;
+<I>chart</I>. Voir la <A HREF="#Couleurs">section 4</A> &agrave; ce sujet.&nbsp;
+<BR>Pour colorer les donn&eacute;es, <I>chart</I> calcule des limites qui
+serviront &agrave; d&eacute;terminer la couleur de chaque point selon sa
+valeur. Il existe deux m&eacute;thodes de calcul des limites (lin&eacute;aire
+et &eacute;galis&eacute;e) et il est aussi possible d’imposer les limites
+&agrave; l’aide d’un fichier. (voir <A HREF="#Couleurs">section 4</A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>Isocontours :&nbsp;</TD>
+
+<TD VALIGN=TOP>Des isocontours sont automatiquement trac&eacute;s d&egrave;s
+que des donn&eacute;es sont fournies au bloc. Il est possible de choisir
+le nombre d’isocontours trac&eacute;s, l’intervalle qui les s&eacute;pare,
+ainsi que leur valeur. Plusieurs autres options sont disponibles pour modifier
+les line labels ainsi que le texte d’information. (voir <A HREF="#Isocontours">section
+5</A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>Vecteurs :</TD>
+
+<TD><I>Chart</I> produit un trac&eacute; de vecteurs d&egrave;s que des
+donn&eacute;es vectorielles sont fournies. Il est possible de sous-&eacute;chantilloner
+un champ. Plusieurs autres options permettent de modifier l’apparence des
+vecteurs (longueur, couleur). Les vecteurs peuvent &ecirc;tre color&eacute;s
+selon leur module, ou selon le champ de donn&eacute;es du bloc couleur.
+(voir <A HREF="#Vecteurs">section 6</A>)&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="20%">Cartes :&nbsp;</TD>
+
+<TD VALIGN=TOP><I>Chart</I> trace automatiquement une carte sur les donn&eacute;es.
+Il est possible de ne pas tracer les continents, ou de ne tracer que leur
+contour. Plusieurs types de projection sont possibles. D’autres options
+permettent de contr&ocirc;ler le trac&eacute; des m&eacute;ridiens, de
+ne tracer qu’une partie des donn&eacute;es, etc. (voir <A HREF="#Configuration">section
+3</A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>Texte :&nbsp;</TD>
+
+<TD VALIGN=TOP>10 cha&icirc;nes de caract&egrave;res peuvent &ecirc;tre
+ajout&eacute;es au dessin. Il est possible de s&eacute;lectionner la taille
+des caract&egrave;res ainsi que leur police. <I>Chart</I> suppose aussi
+la plupart des options de PLOTCHAR (module de NCAR Graphics).&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>Ajouts en surimpression</TD>
+
+<TD>Possiblit&eacute; d'ajouter des trac&eacute;s de lignes ou de marqueurs
+en surimpression sur une carte</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>Les sections suivantes d&eacute;crivent en d&eacute;tail les options
+associ&eacute;es &agrave; chaque bloc, ainsi que les diff&eacute;rents
+formats de fichiers.
+<BR>&nbsp;
+<H1>
+2.0&nbsp;<A NAME="Options générales"></A>Options g&eacute;n&eacute;rales</H1>
+Cette section d&eacute;crit les quelques options qui s’appliquent &agrave;
+l’ensemble du dessin et non &agrave; un seul bloc.
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP NOWRAP WIDTH="15%"><A NAME="-p"></A><B>-p</B><I> fichier</I></TD>
+
+<TD>Indique la palette de couleurs &agrave; lire. Par d&eacute;faut, <I>chart</I>
+cr&eacute;e une palette de 14 couleurs, et d&eacute;finit la couleur des
+oc&eacute;ans, des continents et des valeurs sp&eacute;ciales. <FONT COLOR="#000000">Voir
+la <A HREF="#Palette de couleurs">section 8.1</A></FONT> pour en savoir
+plus sur les fichiers de palette.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-o"></A>-<B>o</B> <I>fichier</I></TD>
+
+<TD>S&eacute;lectionne le nom du fichier de m&eacute;tacode &agrave; cr&eacute;er.
+Par d&eacute;faut, <I>chart</I> cr&eacute;e un fichier nomm&eacute; gmeta.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-rev"></A>-<B>rev</B>&nbsp;</TD>
+
+<TD>Inverse les couleurs de background et de foreground. Utile surtout
+pour obtenir un fond blanc pour imprimer sans avoir &agrave; modifier la
+palette de couleurs.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-lev"></A>-<B>lev</B> <I>integer</I>&nbsp;</TD>
+
+<TD>S&eacute;lectionne la (les) couche(s) &agrave; dessiner. Il est possible
+de sp&eacute;cifier plusieurs couches &agrave; la fois, auquel cas un fichier
+est cr&eacute;&eacute; avec plusieurs frames.&nbsp;
+<BR>Une virgule (,) s&eacute;pare les couches &eacute;num&eacute;r&eacute;es
+une &agrave; une, et un tiret (-) indique une s&eacute;rie de couches.
+Par exemple, pour dessiner les couches 1, 3, 5, 7, 8, 9, 10 :&nbsp;
+<BR>&nbsp;&nbsp; <I>-</I><B>lev</B><I> 1,3,5,7-10</I>&nbsp;
+<BR>0 indique &agrave; <I>chart</I> de dessiner toutes les couches.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><B>-dep</B> <I>real</I>&nbsp;
+<BR><I>-</I><B>ndep</B><I> real</I></TD>
+
+<TD>Permet de sp&eacute;cifier une profondeur en unit&eacute; de profondeur
+du fichier bimg (en g&eacute;n\ral m&egrave;tres), au lieu d'un niveau
+(option -<B>lev</B>). L'option -<B>ndep</B> permet de dessiner le niveau
+le plus proche (nearest depth) de la profondeur demand&eacute;e. L'option
+-<B>dep</B> est pr&eacute;vue pour provoquer une interpolation pour avoir
+les champs exactement &agrave; la profondeur demand&eacute;e. Les chaines
+CLR_DEPTH etc... sont mises &agrave; jour.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-time"></A>-<B>time</B> <I>integer</I>&nbsp;</TD>
+
+<TD>S&eacute;lectionne le (les) pas de temps &agrave; dessiner. Il est
+possible de sp&eacute;cifier plusieurs pas de temps &agrave; la fois, auquel
+cas un seul fichier est cr&eacute;&eacute; avec plusieurs frames. Pour
+obtenir plusieurs pas de temps, utilisez la m&ecirc;me syntaxe que pour
+-<B>lev</B>.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-mask"></A>-<B>mask</B> <I>fichier</I></TD>
+
+<TD>Permet de masquer une partie des donn&eacute;es. Les points de grille
+masqu&eacute;s sont remplac&eacute;s par une valeur sp&eacute;ciale et
+ne sont pas pris en compte lors des calculs. Cette option sp&eacute;cifie
+le masque pour toutes les entr&eacute;es de donn&eacute;es et correspond
+aux options <A HREF="#-clrmask">-<B>clrmask</B></A>, <A HREF="#-cntmask">-<B>cntmask</B></A>
+et <A HREF="#-vecmask">-<B>vecmask</B></A>. Le <A HREF="#Masque">fichier
+mask</A> travaille avec un masque de 1 sur terre et 0 sur mer.</TD>
+</TR>
+
+<TR>
+<TD>-<B>maskopa</B> <I>fichier mask opa</I></TD>
+
+<TD>Idem &agrave; l'option mask mais travaille avec un masque de type OPA,
+<I>ie </I>avec 0 sur terre et 1 sur mer. L'option -<B>mask</B>, originale
+dans <I>chart</I> travaille avec un masque de 1 sur terre et 0 sur mer.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-grid"></A>-<B>grid </B><I>fichier</I>&nbsp;</TD>
+
+<TD>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re.
+Cette option sp&eacute;cifie la grille pour toutes les entr&eacute;es de
+donn&eacute;es et correspond aux options <A HREF="#-clrgrid">-<B>clrgrid</B></A>,
+<A HREF="#-cntgrid">-<B>cntgrid</B></A> et <A HREF="#-vecgrid">-<B>vecgrid</B></A>.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-gridxy"></A>-<B>gridxy</B> <I>fichier</I></TD>
+
+<TD>Permet de sp&eacute;cifier un fichier grille dans lequel, la latidude
+et la longitude des points sont des fonctions de (i,j). Cette option est
+une g&eacute;n&eacute;ralisation importante de l'option -<B>grid</B>. Elle
+peut d'ailleurs &ecirc;tre utilis&eacute;e syst&eacute;matiquement en remplacement
+de -<B>grid</B>. Quand on l'utilise, les couleurs sont trait&eacute;es
+par les routines de contourage, et non plus par les "color cell array"
+(option -<B>clriso</B> activ&eacute;e par d&eacute;faut).</TD>
+</TR>
+
+<TR>
+<TD>-<B>Cgrid</B></TD>
+
+<TD VALIGN=TOP>Nouvelle option pour pouvoir tracer des vecteurs &agrave;
+partir des fichiers U et V sur la grille C, avec indexage OPA. Prochainement,
+la version pour SPEM ... (qui pose probl&egrave;me &agrave; cause des dimensions
+diff&eacute;rentes entre U et V). Cette option peut s'utiliser&nbsp; avec
+-<B>vecdatax</B> et -<B>vecdatay</B> ou bien avec <A HREF="#-vecdataxy">-<B>vecdataxy</B></A>.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>showgrid </B><I>fichier</I></TD>
+
+<TD>Permet de visualiser une grille en overlay sur une carte. Pour l'instant
+tous les points sont pris, il faut donc souvent zoomer. Attention, cette
+grille n'est absolument pas utilis&eacute;e pour projeter les donn&eacute;es.
+Elle est seulement visualis&eacute;e sur un fond de carte.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>direct</B></TD>
+
+<TD>Permet d'utiliser des fichiers de donn&eacute;es (<B><A HREF="#-clrdata">clrdata</A></B>
+ou <B><A HREF="#-cntdata">cntdata</A></B>) de type &agrave; acc&egrave;s
+direct, comme ceux produits par le T3E dans le projet CLIPPER. Dans ce
+cas, l'enregistrement num&eacute;ro 1 du fichier contient dans l'ordre:
+comment1, ni, nj, nk, nt, ndim, x1, y1, dx, dy, spval, (h(k),k=1,nk),(t(k),k=1,nt).</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>system</B> <I>"command string"</I></TD>
+
+<TD>Fait un appel system depuis la ligne de commande de <I>chart</I>.&nbsp;
+<BR>Passe la commande d&egrave;s la lecture de l'option. On peut donc mettre
+autant de -<B>system</B> qu'on le d&eacute;sire. Si un fichier r&eacute;sultant
+de la commande doit &ecirc;tre utilis&eacute; dans des options -<B>clrdata</B>,
+-<B>cntdata</B> etc, penser &agrave; mettre l'option -<B>system</B> <U>avant</U>
+l'option -<B>clrdata</B> ....
+<BR>Cette option permet de faire des pr&eacute;traitements de fichiers,
+par exemple.</TD>
+</TR>
+</TABLE>
+
+<H1>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.0&nbsp;<A NAME="Configuration"></A>Configuration
+de la carte</H1>
+&nbsp;
+
+<P><FONT SIZE=+0>Au d&eacute;part, <I>chart</I> a &eacute;t&eacute; d&eacute;velopp&eacute;
+pour visualiser des donn&eacute;es cartographiques, c’est pourquoi une
+carte est trac&eacute;e par d&eacute;faut avec les donn&eacute;es. La section
+suivante d&eacute;crit comment configurer une carte. Si vos donn&eacute;es
+ne sont pas cartographiques, l’option qui vous int&eacute;resse est <B>-noproj</B>,
+d&eacute;crite ci-dessous.</FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="20%"><A NAME="-proj"></A><B>-proj CC</B></TD>
+
+<TD>S&eacute;lectionne la projection. <I>Chart</I> supporte plusieurs projections
+de NCAR Graphics.&nbsp;
+<BR>CC peut prendre les valeurs suivantes (voir le document de Contouring
+and Mapping Tutorial, page 85) :&nbsp;
+<BR>&nbsp;&nbsp; GL - globe entier&nbsp;
+<BR>&nbsp;&nbsp; ST - stereographic&nbsp;
+<BR>&nbsp;&nbsp; OR - orthographic&nbsp;
+<BR>&nbsp;&nbsp; LE - lambert equal-area&nbsp;
+<BR>&nbsp;&nbsp; GN - gnomonic&nbsp;
+<BR>&nbsp;&nbsp; AE - azimuthal equidistant&nbsp;
+<BR>&nbsp;&nbsp; SV - satellite view&nbsp;
+<BR>&nbsp;&nbsp; ME - mercator&nbsp;
+<BR>&nbsp;&nbsp; CE - cylindrical equidistant (d&eacute;faut)&nbsp;
+<BR>&nbsp;&nbsp; MO - mollweide type&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-noproj"></A>-<B>noproj</B></TD>
+
+<TD>Cette option d&eacute;sactive toutes les options relatives aux cartes
+(projections, trac&eacute; des continents, etc...). Utile lorsque les donn&eacute;es
+ne sont pas cartographiques.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-zoom"></A>-<B>zoom</B>&nbsp;</TD>
+
+<TD>Indique la r&eacute;gion des donn&eacute;es &agrave; dessiner. Cette
+r&eacute;gion doit &ecirc;tre commune &agrave; tous les fichiers donn&eacute;s
+en argument. Par d&eacute;faut, la r&eacute;gion maximale est dessin&eacute;e.&nbsp;
+<BR>&nbsp;Syntaxe : -<B>zoom</B> xmin xmax ymin ymax&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-marg"></A>-<B>marg</B>&nbsp;</TD>
+
+<TD>Indique la r&eacute;gion &agrave; repr&eacute;senter sur le dessin.
+Cette r&eacute;gion peut &ecirc;tre plus grande ou plus petite que celle
+d&eacute;crite par -<B>zoom</B>, selon l’effet d&eacute;sir&eacute;.&nbsp;
+<BR>&nbsp;Syntaxe : -<B>marg</B> xmin xmax ymin ymax&nbsp;
+
+<P><I>note</I> : <I>-<B>marg</B> ne devrait &ecirc;tre utilis&eacute; que
+pour modifier l’apparence de la carte, et non pour visualiser une partie
+des donn&eacute;es, &eacute;tant donn&eacute; que les calculs sont effectu&eacute;s
+sur les donn&eacute;es sp&eacute;cifi&eacute;es par -<B>zoom</B>. Si vous
+n’utilisez que -<B>marg</B>, les calculs se font par d&eacute;faut sur
+l’ensemble des donn&eacute;es, m&ecirc;me si une partie seulement en est
+affich&eacute;e.&nbsp;</I></TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-map"></A>-<B>map</B> / -<B>nomap</B></TD>
+
+<TD>Dessine ou non les continents sur la carte. Les continents sont remplis
+avec la palette d&eacute;finie &agrave; l’index 2. (d&eacute;faut -<B>map</B>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-outl"></A>-<B>outl</B></TD>
+
+<TD>trac&eacute; du contour des continents seulement</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP>-<B>perim</B> / -<B>noperim</B></TD>
+
+<TD>Dessine ou non un cadre autour de la carte. (d&eacute;faut -<B>perim</B>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>grad / -nograd</B></TD>
+
+<TD>Dessine ou non une graduation sur le cadre. (d&eacute;faut -<B>grad</B>)&nbsp;
+<BR>&nbsp;<I>note : -noperim enl&egrave;ve automatiquement la graduation.</I>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>noxlab</B></TD>
+
+<TD>Pas de labels sur l’axe des x. (longitude)</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>noylab</B></TD>
+
+<TD>Pas de labels sur l’axe des y. (latitude)</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>xyplot</B>&nbsp;</TD>
+
+<TD>D&eacute;termine l’emplacement de la carte sur le plot frame NCAR.
+Les coordon&eacute;es doivent se trouver entre 0.0 et 1.0.&nbsp;
+<BR>&nbsp;Syntaxe : -<B>xyplot</B> xmin xmax ymin ymax&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-xstep"></A>-<B>xstep</B> int:subd:larg&nbsp;
+
+<P>/&nbsp;
+
+<P><A NAME="-ystep"></A>-<B>ystep</B> int:subd:larg</TD>
+
+<TD>D&eacute;termine l’intervalle des graduations sur l’axe horizontal
+ou vertical. Il est possible de sp&eacute;cifier des subdivisions, ainsi
+que la largeur du trait des divisions principales. (utile pour l’option
+grille)&nbsp;
+<BR>&nbsp;Syntaxe : -<B>xstep</B> int:subd:larg&nbsp;
+<BR>&nbsp;o&ugrave; :&nbsp;
+<DL>
+<DD>
+int - intervalle&nbsp;</DD>
+
+<DD>
+subd - nombre de subdivisions&nbsp;</DD>
+
+<DD>
+larg - largeur du trait des divisions principales&nbsp;</DD>
+</DL>
+&nbsp;par exemple, pour obtenir une division tous les deux degr&eacute;s
+et une subdivision aux degr&eacute;s :&nbsp;
+<BR>&nbsp;&nbsp; -<B>xstep</B> 2:2&nbsp;
+<BR>&nbsp;pour obtenir une subdivision tous les demi-degr&eacute;s, et
+un trait deux fois plus large que les divisions principales :&nbsp;
+<BR>&nbsp;&nbsp; -<B>xstep</B> 2:4:2&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cslab ??</B></TD>
+
+<TD>D&eacute;termine la tailles des caract&egrave;res des labels sur les
+axes</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>xgrid/-ygrid</B></TD>
+
+<TD>S&eacute;lectionne le trac&eacute; des lignes horizontales ou verticales
+sur le dessin. L’intervalle employ&eacute; est celui sp&eacute;cifi&eacute;
+par <A HREF="#-xstep">-<B>xstep</B></A> ou <A HREF="#-ystep">-<B>ystep</B></A>,
+incluant les subdivisions.&nbsp;
+<BR>&nbsp;<I>note : lorsque la projection s&eacute;lectionn&eacute;e n’est
+pas CE, les m&eacute;ridiens sont trac&eacute;s &agrave; l’aide de la fonction
+MAPGRM, qui ne supporte pas un intervalle diff&eacute;rent en x et y. Donc,
+d&egrave;s que la projection est autre que CE, -<B>xstep</B> et -<B>ystep</B>
+sp&eacute;cifient l’intervalle et la grille pour les x et les y.&nbsp;</I>&nbsp;
+
+<P>&nbsp;exemple : <B>chart</B> -<B>clrdata</B> topex.bimg -<B>proj</B>
+GL -<B>rlat</B> 40 -<B>rlon</B> 20 -<B>xgrid</B>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>rlat/-rlon</B></TD>
+
+<TD>D&eacute;termine le centre de la carte. Par d&eacute;faut, le centre
+de la carte correspond au centre des donn&eacute;es.&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H1>
+4.0&nbsp;<A NAME="Couleurs"></A>Couleurs</H1>
+&nbsp;
+
+<P>Toutes les options se rapportant &agrave; la couleur commence par le
+pr&eacute;fixe <B>clr</B>.
+<BR>Pour ceux qui connaissent d&eacute;j&agrave; <I>chart</I>, le nom des
+anciennes options correspondantes est indiqu&eacute; &agrave; la section
+11.2 et peut toujours &ecirc;tre employ&eacute;, mais il est recommand&eacute;
+d'utiliser la nouvelle syntaxe.
+
+<P>Si aucune palette de couleurs n'est sp&eacute;cifi&eacute;e, <I>chart</I>
+utilisera une palette interne, d&eacute;finissant le fond blanc, le texte
+et les lignes noires, ainsi que les continents marron.
+<BR>Selon le nombre de couleurs, 80 au maximum, <I>chart</I> calcule des
+limites, qui sont les valeurs min et max entre lesquelles une certaine
+couleur est attribu&eacute;e &agrave; une donn&eacute;e. Les limites peuvent
+&ecirc;tre calcul&eacute;es selon deux m&eacute;thodes ou &ecirc;tre lues
+dans un fichier. (voir les options <A HREF="#-clrmet">-<B>clrmet</B></A>
+et <A HREF="#-clrlim">-<B>clrlim</B></A>)
+
+<P>&nbsp;
+<H2>
+<FONT SIZE=+2>4.1 Fichiers</FONT></H2>
+
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="20%"><A NAME="-clrdata"></A>-<B>clrdata</B> <I>fichier</I></TD>
+
+<TD>Sp&eacute;cifie le fichier de donn&eacute;es &agrave; colorer.&nbsp;
+<BR>Indication sur l'&eacute;cran (std output) du minimum et du maximum
+du champ &agrave; tracer. Si le champ est constant, passe automatiquement
+en <A HREF="#-clrmet">-<B>clrmet</B> 1</A>.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-clrmask"></A>-<B>clrmask</B> <I>fichier</I></TD>
+
+<TD>Permet de remplacer une partie des donn&eacute;es. Les points de grille
+masqu&eacute;s sont remplac&eacute;s par une valeur sp&eacute;ciale et
+ne sont pris pas en compte lors des calculs. (voir aussi <A HREF="#-mask">-<B>mask</B></A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-clrgrid"></A>-<B>clrgrid</B> <I>fichier</I></TD>
+
+<TD>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re.
+Le fichier de grille contient coordonn&eacute;es de chaque point sp&eacute;cifi&eacute;
+par -<B>clrdata</B>. (voir aussi <A HREF="#-grid">-<B>grid</B></A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-clrlim"></A>-<B>clrlim</B> <I>fichier</I></TD>
+
+<TD>Les limites seront lues dans ce fichier au lieu d'&ecirc;tre calcul&eacute;es.
+Le fichier de limites doit d&eacute;finir au minimum le nombre de couleurs
+dans la <A HREF="#Palette de couleurs">palette</A> plus 1. Si plus de limites
+sont d&eacute;finies, elles ne seront pas utilis&eacute;es.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-clrlout"></A>-<B>clrlout</B> <I>fichier</I></TD>
+
+<TD>Lorsque les limites sont calcul&eacute;es par <I>chart</I>, cette option
+permet de les r&eacute;cup&eacute;rer dans un fichier. Attention, cette
+option &eacute;crasera le fichier donn&eacute; en argument s'il existe
+d&eacute;j&agrave;.&nbsp;</TD>
+</TR>
+</TABLE>
+
+<H2>
+&nbsp;<FONT SIZE=+2>4.2&nbsp;<A NAME="Options de calcul"></A><B>Options
+de calcul</B></FONT></H2>
+
+<CENTER>&nbsp;</CENTER>
+&nbsp;
+<CENTER><TABLE BORDER=0 CELLSPACING=20 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="20%"><A NAME="-clrmet"></A>-<B>clrmet</B> [1 ou 2
+]</TD>
+
+<TD>Deux m&eacute;thodes de calcul des limites sont disponibles.&nbsp;
+<BR>&nbsp;M&eacute;thode 1 : <I>chart</I> trouve les valeurs minimale et
+maximale du champ de donn&eacute;es et divise la plage de valeurs par le
+nombre de couleurs (m&eacute;thodes lin&eacute;aire).&nbsp;
+<BR>&nbsp;M&eacute;thode 2 : <I>chart</I> proc&egrave;de par &eacute;galisation
+; de fa&ccedil;on &agrave; attribuer une quantit&eacute; &eacute;gale de
+points de grille &agrave; chaque couleur (m&eacute;thode &eacute;galis&eacute;e).&nbsp;
+
+<P>&nbsp;Il est aussi possible de forcer les limites &agrave; certaines
+valeurs au moyen d'un fichier. (voir aussi l'option -<B>clrmin</B>)&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER>&nbsp;</CENTER>
+&nbsp;
+<CENTER><TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP>-<B>clrint</B> -<B>clrnoint</B></TD>
+
+<TD>Comme la distance entre deux points de grille peut devenir importante
+lors d'un zoom, chaque point est alors repr&eacute;sent&eacute; par un
+carr&eacute; large de plusieurs pixels. L'option -<B>clrint</B> indique
+&agrave; <I>chart</I> de calculer les pixels entre les points par interpolation.
+Le r&eacute;sultat sera alors plus lisse.&nbsp;
+
+<P>-<B>clrint</B> est l'option utilis&eacute;e par d&eacute;faut. Utilisez
+-<B>clrnoint</B> pour avoir une repr&eacute;sentation exacte de vos donn&eacute;es.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrexp</B> <I>real</I></TD>
+
+<TD>Lorsque des donn&eacute;es sont d'un ordre de grandeur &eacute;lev&eacute;
+ou tr&egrave;s petit, cela peut causer des probl&egrave;mes d'espace sous
+la barre de palette. -<B>clrexp</B> utilise une puissance de dix par laquelle
+<I>chart</I> divisera les nombres avant de les afficher. Un format appropri&eacute;
+peut alors &ecirc;tre utilis&eacute; (voir l'option <A HREF="#-format">-<B>format</B></A>,
+section 7.2) et l'&eacute;chelle peut &ecirc;tre indiqu&eacute;e sous la
+barre de palette au moyen de l'option <A HREF="#-string">-<B>string</B></A>
+(section 7.2). Par exemple :&nbsp;
+<BR>&nbsp;-<B>clrexp</B> <I>3</I> -<B>format</B> <I>PALETTE f10.2</I>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrmin</B> <I>real</I>&nbsp;
+
+<P>-<B>clrmax</B> <I>real</I></TD>
+
+<TD>Valeurs minimale et maximale entre lesquelles on d&eacute;sire que
+le calcul des limites s'effectue. Les autres valeurs satureront aux couleurs
+extr&ecirc;mes de la palette. Il est possible de ne pr&eacute;ciser que
+-<B>clrmin</B> ou -<B>clrmax</B>.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrmsk</B></TD>
+
+<TD>Permet de masquer les valeurs en dehors des limites sp&eacute;cifi&eacute;es
+par <I>clrmin</I> et <I>clrmax</I>. Les valeurs inf&eacute;rieures &agrave;
+<I>clrmin</I> sont de la couleur <I>clrmin</I> et les valeurs sup&eacute;rieures
+&agrave; <I>clrmax</I> sont de la couleur de <I>clrmax</I>.</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;&nbsp;
+<H2>
+&nbsp; 4.3&nbsp;<A NAME="Autres options"></A><B>Autres options</B></H2>
+
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="20%">-<B>clriso</B></TD>
+
+<TD>La couleur est normalement produite en colorant chaque pixel de la
+carte. Cette m&eacute;thode est rapide lors des calculs, mais a comme inconv&eacute;nient
+de cr&eacute;er d'&eacute;normes fichiers postscript &agrave; l'impression.
+L'option -<B>clriso</B> indique &agrave; <I>chart</I> de proc&eacute;der
+par remplissage d'isocontours. Le temps de calcul est multipli&eacute;
+par quatre ou cinq, mais le r&eacute;sultat est plus lisse et le postscript
+cr&eacute;&eacute; peut &ecirc;tre jusqu'&agrave; 30 fois plus petit.&nbsp;
+
+<P><I>note : cette option cr&eacute;e parfois des r&eacute;sultats "bizarres"
+si elle est utilis&eacute;e avec une projection CE (cylindrique &eacute;quidistante).
+Il s'agit d'un bug NCAR incontournable.&nbsp;</I></TD>
+</TR>
+
+<TR>
+<TD>-<B>clrlev </B><I>integer</I></TD>
+
+<TD>Permet de sp&eacute;cifier les niveaux du fichier sp&eacute;cifi&eacute;
+par -<B>clrdata</B> &agrave; plotter</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-clrdatamod"></A>-<B>clrdatamod</B></TD>
+
+<TD>Cette option est une alternative &agrave; <A HREF="#-clrdata">-<B>clrdata</B></A>.
+Les donn&eacute;es pour la couleur proviendront d'un module des vecteurs
+plut&ocirc;t que d'un fichier de donn&eacute;es. Il faut, bien entendu,
+que des donn&eacute;es soient sp&eacute;fici&eacute;es avec l'option <A HREF="#-vecdataxy">-<B>vecdata</B></A>.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrpal</B> / -<B>clrnopal</B></TD>
+
+<TD>Affiche ou non une barre de palette. (-<B>clrpal</B> est l'option par
+d&eacute;faut)</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrxypal</B>&nbsp;</TD>
+
+<TD>D&eacute;termine le rectangle dans lequel sera dessin&eacute;e la barre
+de <A HREF="#Palette de couleurs">palette</A>. Le cadre est donn&eacute;
+en coordonn&eacute;es "plot frame", entre 0.0 et 1.0.&nbsp;
+<BR>&nbsp;Syntaxe : -<B>clrxypal</B> <I>xmin xmax ymin ymax&nbsp;</I></TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrnocol</B></TD>
+
+<TD>Cette option emp&ecirc;che le trac&eacute; des donn&eacute;es color&eacute;es.&nbsp;
+<BR>&nbsp;Surtout utilis&eacute;e en interne par <I>chart</I> pour la coloration
+des vecteurs (<A HREF="#Coloration des vecteurs">section 6.2</A>) et pour
+les fichiers de configuration (<A HREF="#Fichier de configuration">section
+8.2</A>).&nbsp;
+<BR>&nbsp;Par exemple, si les vecteurs sont color&eacute;s selon un scalaire
+donn&eacute; par -<B>clrdata</B>, il peut &ecirc;tre utile de ne pas tracer
+le scalaire en question.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>clrdim </B><I>integer</I></TD>
+
+<TD>Lorsque le fichier de donn&eacute;es comporte plus d'une dimension,
+cette option sp&eacute;cifie la dimension &agrave; dessiner. Voir la<FONT COLOR="#000000">
+<A HREF="#Format bimg">section 8.3</A> </FONT>sur le format BIMG. -<B>clrdim</B>
+s&eacute;lectionne une dimension parmi ndim.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vertpal</B></TD>
+
+<TD>Permet de tracer une palette de couleur dans le sens vertical au lieu
+du sens horizontal (par d&eacute;faut). Dans ce cas les valeurs par d&eacute;faut
+de <B>xyplot</B> et de <B>xypal</B> sont modifi&eacute;es automatiquement
+pour &eacute;viter les chevauchements entre palette et dessin.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>lbpal</B> <I>integer</I></TD>
+
+<TD>Permet de sp&eacute;cifier la position des labels dans les palettes,
+verticales ou horizontales&nbsp;
+<DL>
+<DD>
+0 : pas de labels</DD>
+
+<DD>
+1 : labels en dessous ou &agrave; droite (d&eacute;faut)</DD>
+
+<DD>
+2 : labels au dessus ou &agrave; gauche</DD>
+
+<DD>
+3 : des deux cot&eacute;s</DD>
+</DL>
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>greyscale</B></TD>
+
+<TD>Utilise une palette interne de 11 niveaux de gris au lieu de la palette
+par d&eacute;faut &agrave; 14 couleurs.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>jetpal</B></TD>
+
+<TD>Permet le choix d'une palette de couleur de type JET avec un nombre
+de couleurs sp&eacute;cifi&eacute;, sans passer par un fichier palette.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>zebre</B> <I>integer</I></TD>
+
+<TD>Permet le choix d'une palette de couleur de type JET mais avec alternance
+de bandes noires.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>ocean</B></TD>
+
+<TD>Permet de colorer les oc&eacute;ans avec la couleur 4 de la palette.
+Par d&eacute;faut cette action est d&eacute;activ&eacute;e.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>palout</B></TD>
+
+<TD>Cette option permet de sortir le fichier palette (au bon format) correspondant
+&agrave; la palette utilis&eacute;e. Utile avec l'option -<B>jetpal</B>
+puisqu'elle permet de retoucher manuellement une palette. Le fichier de
+sortie est en standard le fichier <I>used_palette</I>.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>prev</B></TD>
+
+<TD>Palette reverse, renverse les couleurs d'une palette, aussi bien par
+d&eacute;faut que lue dans un fichier.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H1>
+5.0&nbsp;<A NAME="Isocontours"></A>Isocontours</H1>
+Toutes les options se rapportant aux isocontours commencent par le pr&eacute;fixe
+<B>cnt</B>.
+
+<P>Par d&eacute;faut <I>chart</I> dessine automatiquement des isocontours
+d&egrave;s que les donn&eacute;es sont entr&eacute;es avec -<B>cntdata</B>.
+Le nombre d’isocontours et leurs valeurs sont choisis par NCAR pour donner
+un beau r&eacute;sultat (nice value). Il est possible, avec les options
+d&eacute;crites dans cette section, de modifier ces valeurs par d&eacute;faut
+pour obtenir exactement les isocontours d&eacute;sir&eacute;s.
+<BR>&nbsp;
+<H2>
+5.1 Fichiers</H2>
+
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="20%"><A NAME="-cntdata"></A>-<B>cntdata</B> <I>fichier</I>&nbsp;</TD>
+
+<TD>Sp&eacute;cifie le fichier de donn&eacute;es.&nbsp;
+<BR>Modification de la lecture dans le cas o&ugrave; la <I>spval</I> est
+nulle. Dans ncarg3.2, <I>spval=0</I> indique que l'on n'utilise pas les
+<I>spval</I>. Il y avait donc probl&egrave;me, corrig&eacute; en rempla&ccedil;ant
+dans ce cas les 0 par une <I>spval</I> par d&eacute;faut.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntmask"></A><B>cntmask</B> <I>fichier</I>&nbsp;</TD>
+
+<TD>Permet de masquer une partie des donn&eacute;es. Les points de grille
+masqu&eacute;s sont remplac&eacute;s par une valeur sp&eacute;ciale et
+ne sont pas pris en compte lors des calculs. (voir aussi l’option <A HREF="#-mask">-<B>mask</B></A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntgrid"></A><B>cntgrid</B> <I>fichier</I></TD>
+
+<TD>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re.
+Le fichier de grille contient les coordonn&eacute;es de chaque point du
+fichier sp&eacute;cifi&eacute; par -<B>cntdata</B>. (voir aussi l’option
+<A HREF="#-grid">-<B>grid</B></A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-cntlim"></A>-<B>cntlim</B> fichier&nbsp;</TD>
+
+<TD>La valeur exacte de chaque isocontour est lue dans ce fichier. Le nombre
+d’isocontours d&eacute;pend du nombre de valeurs de ce fichier.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntlout"></A><B>cntlout</B> fichier&nbsp;</TD>
+
+<TD>Lorsque les isocontours sont calcul&eacute;s par <I>chart</I>, cette
+option permet de les r&eacute;cup&eacute;rer dans un fichier. Attention,
+cette option &eacute;crasera le fichier donn&eacute; en argument s’il existe
+d&eacute;j&agrave;.&nbsp;</TD>
+</TR>
+</TABLE>
+
+<H2>
+5.2 Modification des isocontours</H2>
+
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="20%">-<B>cntnum</B> <I>integer</I>&nbsp;</TD>
+
+<TD>D&eacute;termine le nombre d’isocontours. NCAR calculera l’intervalle
+n&eacute;cessaires pour obtenir N isocontours entre les valeurs maximale
+et minimale contenue dans les donn&eacute;es.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntint"></A><B>cntint</B> <I>real</I>&nbsp;</TD>
+
+<TD>D&eacute;termine l’intervalle entre les isocontours. Les isocontours
+seront trac&eacute;s &agrave; partir de la valeur minimale trouv&eacute;e
+dans les donn&eacute;es.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntmin</B> <I>real</I></TD>
+
+<TD>valeur minimale &agrave; consid&eacute;rer lors des calculs d'isocontours&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntmax</B> <I>real</I>&nbsp;</TD>
+
+<TD>valeur maximale &agrave; consid&eacute;rer lors des calculs d'isocontours</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H2>
+5.3 Line Labels</H2>
+<I>Note : La plupart des options suivantes ne sont, en fait, qu’un acc&egrave;s
+direct &agrave; certaines constantes de NCAR Graphics. Veuillez vous r&eacute;f&eacute;rez
+au document &laquo;contouring adn Mapping Tutorial &raquo; pp. 393 &agrave;
+416 pour plus de d&eacute;tails. Lorsqu’une option correspond directement
+&agrave; une constante NCAR, le nom de la constante est indiqu&eacute;e.</I>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="20%">-<A NAME="-cntlbc"></A><B>cntlbc</B> <I>integer</I>&nbsp;</TD>
+
+<TD>Label Box Color index (LBC).&nbsp;
+<BR>D&eacute;termine l’index de couleur des bo&icirc;tes entourant les
+line labels.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntllb"></A><B>cntllb</B> <I>integer</I></TD>
+
+<TD>Line Label Box flag (LLB). Valide pour LLB &eacute;gal &agrave; 2 ou
+3.&nbsp;
+<BR>&nbsp;D&eacute;termine le type de cadre autour des line labels.&nbsp;
+<DL>
+<DD>
+&nbsp;0 - aucun cadre&nbsp;</DD>
+
+<DD>
+&nbsp;1 - seul un p&eacute;rim&egrave;tre est dessin&eacute; autour des
+labels. (m&ecirc;me couleur que le texte)&nbsp;</DD>
+
+<DD>
+&nbsp;2 - une bo&icirc;te de couleur (index LBC) est dessin&eacute;e autour
+des labels.&nbsp;</DD>
+
+<DD>
+&nbsp;3 - 1 et 2, soit une bo&icirc;te de couleur avec un cadre.&nbsp;</DD>
+</DL>
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntllp"></A><B>cntllp</B> <I>integer</I>&nbsp;</TD>
+
+<TD>Line Label Positioning (LLP).&nbsp;
+<BR>D&eacute;termine si oui ou non des line labels seront dessin&eacute;s
+et de quel type.&nbsp;
+
+<P>0 =aucun label,&nbsp;
+
+<P>2 = d&eacute;faut&nbsp;
+<BR>&nbsp;
+
+<P>(voir page 406 du document &laquo; Contouring and Mapping Tutorial &raquo;
+pour plus de d&eacute;tails).&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntlw"></A><B>cntlw</B> <I>real</I>&nbsp;</TD>
+
+<TD>Largeur du trait des isocontours. Deux points, suivis d’une valeur,
+indiquent la largeur du trait des isocontours &eacute;tiquet&eacute;s.
+D&eacute;faut 1.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<A NAME="-cntlabc"></A><B>cntlabc</B> <I>integer</I>&nbsp;</TD>
+
+<TD>D&eacute;termine l’index de couleur du texte des line labels. (une
+couleur sp&eacute;ciale dont l’index est entre 10 et 19 peut &ecirc;tre
+utilis&eacute;e, voir <A HREF="#Palette de couleurs">section 8.1</A>)&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H2>
+5.4&nbsp;<A NAME="Texte"></A>Texte d'information</H2>
+&nbsp;Le texte d’information est la cha&icirc;ne de caract&egrave;res qui
+indique habituellement les valeurs des isocontours minimum et maximum,
+ainsi que l’intervalle entre les isocontours. Cette cha&icirc;ne peut &ecirc;tre
+modifi&eacute;e et plusieurs variables peuvent &ecirc;tre utilis&eacute;es.
+Voir &agrave; ce sujet la page 404 du document &laquo; Contouring and Mapping
+Tutorial &raquo;.&nbsp;
+<CENTER><TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="30%">-<B>cntilb</B> <I>integer</I></TD>
+
+<TD>Information Label Box flag. (ILB)&nbsp;
+<BR>Choisit le type de cadre autour du texte d’information&nbsp;
+<DL>
+<DD>
+0 – aucun cadre&nbsp;</DD>
+
+<DD>
+1 – seul un p&eacute;rim&egrave;tre est dessin&eacute; autour du texte.
+(m&ecirc;me couleur que le texte.)&nbsp;</DD>
+
+<DD>
+2 – une bo&icirc;te de couleur (index LBC) est dessin&eacute;e autour du
+texte.&nbsp;</DD>
+
+<DD>
+3 – 1 et 2, soit une bo&icirc;te de couleur avec un cadre.&nbsp;</DD>
+</DL>
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntilc</B> <I>integer</I></TD>
+
+<TD>Index Label Color (ILC)&nbsp;
+<BR>Index de la couleur du texte d’information. (Une couleur sp&eacute;ciale
+dont l’index est entre 10 et 19 peut &ecirc;tre utilis&eacute;e, voir <A HREF="#Palette de couleurs">section
+8.1</A>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntilxy</B> <I>real</I> <I>real</I></TD>
+
+<TD>Coordonn&eacute;es en X et Y du texte d’information, exprim&eacute;es
+en unit&eacute; &laquo; plot frame &raquo; entre 0.0 et 1.0.&nbsp;
+<BR>Voir <B>–cntilp</B> ci-dessous pour savoir &agrave; quel point du texte
+correspondent ces coordonn&eacute;es.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntilp</B> <I>integer</I></TD>
+
+<TD>Information Label Positionning flag. (ILP)&nbsp;
+<BR>D&eacute;termine le point d&eacute;crit par les coordonn&eacute;es
+de <B>–cntilxy</B>. (d&eacute;faut 4)&nbsp;
+
+<P><IMG SRC="cntilp.jpg" HEIGHT=120 WIDTH=246>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntilt</B> <I>string</I></TD>
+
+<TD>Information Label Text (ILT)&nbsp;
+<BR>Cha&icirc;ne du texte d’information. Plusieurs variables peuvent &ecirc;tre
+utilis&eacute;es dans cette cha&icirc;ne, r&eacute;f&eacute;rez-vous &agrave;
+la page 404 du document &laquo; Contouring and Mapping Tutorial &raquo;.&nbsp;
+<BR>&nbsp;d&eacute;faut : Contours de $CMN$ a $CMX$ par intervalles de
+$CIU$&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntils</B> <I>real</I></TD>
+
+<TD>Permet de sp&eacute;cifier la taille des caract&egrave;res utilis&eacute;s
+dans le texte d'information des labels. La valeur par d&eacute;faut est
+de 0.012.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>cntlls</B> <I>real</I></TD>
+
+<TD>Permet de sp&eacute;cifier la taille des caract&egrave;res utilis&eacute;s
+dans les labels d'isocontours. La valeur par d&eacute;faut est de 0.010.</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;&nbsp;
+<H2>
+5.5 Autres options</H2>
+
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="30%"><I>-</I><B>cntdash</B></TD>
+
+<TD><FONT SIZE=+0>Force les lignes de contour n&eacute;gatives &agrave;
+&ecirc;tre en tirets.</FONT></TD>
+</TR>
+
+<TR>
+<TD>-<B>cntshade</B></TD>
+
+<TD>Grise les contours n&eacute;gatifs d'un contourage. Cette option peut
+s'appliquer avec ou sans -<B>cntdash</B>, qu'elle compl&egrave;te.</TD>
+</TR>
+
+<TR>
+<TD>-<B>cntlev </B><I>integer</I></TD>
+
+<TD>Permet de sp&eacute;cifier les niveaux du fichier sp&eacute;cifi&eacute;
+par <A HREF="#-cntdata">-<B>cntdata</B></A> &agrave; tracer.</TD>
+</TR>
+
+<TR>
+<TD><B>-cntexp</B><I> real</I></TD>
+
+<TD><FONT SIZE=+0>Lorsque les donn&eacute;es sont d’un ordre de grandeur
+&eacute;lev&eacute; ou tr&egrave;s petit, cela peut causer des probl&egrave;mes
+d’affichage des <I>labels </I><B>–cntexp </B>est une puissance de dix par
+laquelle <I>chart</I> divisera les nombres avant de les afficher. Un format
+appropri&eacute; peut &ecirc;tre alors utilis&eacute;. (voir l’option <B><A HREF="#-format">–format</A></B>,
+section 7.2)</FONT></TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><B>-cntcwm</B> <I>real</I></TD>
+
+<TD>Character Width Multiplier (CWM)&nbsp;
+<BR><FONT SIZE=+0>Multiplie la taille des caract&egrave;res associ&eacute;s
+aux isocontours. Affecte les <I>line labels</I> ainsi que le texte d’information.</FONT></TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><B>-cntdim</B></TD>
+
+<TD>Lorsque le fichier de donn&eacute;es comporte plus d’une dimension,
+cette option sp&eacute;cifie la dimension &agrave; dessiner. Voir la <A HREF="#Format bimg">section
+8.3</A> sur le format BIMG.&nbsp;
+
+<P><B>–cntdim</B> s&eacute;lectionne une dimension parmi <B>ndim</B>.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><B>-cntrc1</B> <I>real</I></TD>
+
+<TD>Regular Scheme Constant 1 (RC1).&nbsp;
+
+<P><FONT SIZE=+0>Sp&eacute;cifie la distance entre le d&eacute;but d’un
+isocontour et le premier label sur cet isocontour lorsque le mode de positionnement
+des labels est 2 (LLP).&nbsp; R&eacute;duire cette valeur, ainsi que RC2,
+augmente la quantit&eacute; de labels sur le dessin. (d&eacute;faut <I>chart</I>
+0.15, d&eacute;faut NCAR 0.25)</FONT></TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><B>-cntrc2</B> <I>real</I></TD>
+
+<TD>Regular Scheme Constant 2 (RC2)&nbsp;
+
+<P class="MsoBodyTextIndent"><FONT SIZE=+0>Sp&eacute;cifie la distance
+entre les labels sur un m&ecirc;me isocontour. Le positionnement et la
+quantit&eacute; de labels sur un dessin sont grandement affect&eacute;s
+par RC1 et RC2 lorsque LLP est 2. (d&eacute;faut <I>chart </I>0.15, d&eacute;faut
+NCAR 0.25)</FONT></TD>
+</TR>
+</TABLE>
+&nbsp; <I><FONT SIZE=+0>Rappel :&nbsp; la couleur des isocontours est d&eacute;termin&eacute;e
+par l’index 5 de la <A HREF="#Palette de couleurs">palette de couleur</A>.
+Si cette couleur n’est pas sp&eacute;cifi&eacute;e dans la palette, les
+contours seront de la couleur du foreground.</FONT></I>
+<H1>
+6.0&nbsp;<A NAME="Vecteurs"></A>Vecteurs</H1>
+Par d&eacute;faut, <I>chart</I> trace des vecteurs d&egrave;s que des donn&eacute;es
+sont sp&eacute;cifi&eacute;es avec l’une des options <B>–vecdataXX</B>.
+Comme les vecteurs comportent plusieurs composantes, l’entr&eacute;e de
+donn&eacute;es peut s’effectuer de plusieurs fa&ccedil;ons. On peut sp&eacute;cifier
+les donn&eacute;es dimension par dimension, auquel cas chaque fichier bimg
+contient une composante, ou bien on peut d&eacute;finir le bimg comme contenant
+plusieurs dimensions.
+<BR>&nbsp;
+<H2>
+<B>6.1 Fichiers</B></H2>
+
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP>-<B>vecdatax</B> <I>fichier</I> -<B>vecdatay </B><I>fichier</I></TD>
+
+<TD>D&eacute;finissent les composantes X et Y des vecteurs &agrave; tracer.
+La Ni&egrave;me couche au temps t (d&eacute;finie par <B><A HREF="#-lev">–lev</A></B>
+et <B><A HREF="#-time">–time</A></B>) de chaque fichier est lue et les
+composantes sont assembl&eacute;es pour former les vecteurs.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-vecdataxy"></A>-<B>vecdataxy </B><I>fichier</I></TD>
+
+<TD>les composantes X et Y sont lues d’un m&ecirc;me fichier. A la Ni&egrave;me
+couche et au temps t (d&eacute;finis par <B><A HREF="#-lev">–lev</A></B>
+et <B><A HREF="#-time">–time</A></B>), les dimensions 1 et 2 sont assembl&eacute;es
+pour former les vecteurs.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecdatapsi</B> <I>fichier</I></TD>
+
+<TD>Le fichier sp&eacute;cifi&eacute; contient des donn&eacute;es de fonction
+de courant desquelles seront d&eacute;riv&eacute;s les vecteurs.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-vecmask"></A>-<B>vecmask</B> <I>fichier</I></TD>
+
+<TD>Permet de masquer une partie des donn&eacute;es. Les points de grille
+masqu&eacute;s sont remplac&eacute;s par une valeur sp&eacute;ciale et
+ne sont pas pris en compte lors des calculs. (voir aussi l’option <B><A HREF="#-mask">–mask</A></B>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-vecgrid"></A>-<B>vecgrid</B> <I>fichier</I></TD>
+
+<TD>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re.
+Le fichier de grille contient les coordonn&eacute;es de chaque point du
+fichier sp&eacute;cifi&eacute; par <B>–vecdata</B>. (voir aussi l’option
+<B><A HREF="#-grid">–grid</A></B>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP><A NAME="-veclim"></A>-<B>veclim</B> <I>fichier</I></TD>
+
+<TD>Limites utilis&eacute;es pour la coloration des vecteurs. Voir la <A HREF="#Coloration des vecteurs">section
+6.2</A> sur les couleurs, pour plus de d&eacute;tails sur le calcul des
+limites.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>veclout</B> <I>fichier</I></TD>
+
+<TD>Lorsque les limites sont calcul&eacute;es par <I>chart</I>, cette option
+permet de les r&eacute;cup&eacute;rer dans un fichier. Attention, cette
+option &eacute;crasera le fichier donn&eacute; en argument s’il existe
+d&eacute;j&agrave;.&nbsp;</TD>
+</TR>
+</TABLE>
+
+<H2>
+&nbsp;&nbsp;&nbsp; <B>6.2&nbsp;<A NAME="Coloration des vecteurs"></A>Coloration
+des vecteurs</B></H2>
+
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="30%">-<B>vecclrmod</B></TD>
+
+<TD><I>Chart</I> colorera les vecteurs selon leur module</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecclr</B></TD>
+
+<TD><I>Chart</I> colorera les vecteurs selon le champ de scalaires de <B><A HREF="#-clrdata">–clrdata</A></B>.
+Les couleurs et les limites utilis&eacute;es seront celles du bloc de couleurs
+et le trac&eacute; des couleurs sera d&eacute;sactiv&eacute;.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecmet</B> [<I>1</I> ou <I>2</I>]</TD>
+
+<TD>Deux m&eacute;thodes de calcul des limites sont disponibles.&nbsp;
+<BLOCKQUOTE>M&eacute;thode 1 : chart trouve les valeurs minimale et maximale
+du champ de donn&eacute;es et divise la plage de valeurs par le nombre
+de couleurs.(m&eacute;thode lin&eacute;aire)</BLOCKQUOTE>
+
+<BLOCKQUOTE>M&eacute;thode 2 : <I>chart</I> proc&egrave;de par &eacute;galisation,
+de fa&ccedil;on &agrave; attribuer une quantit&eacute; &eacute;gale de
+points de grille &agrave; chaque couleur. (m&eacute;thode &eacute;galis&eacute;e)</BLOCKQUOTE>
+Il est aussi possible de forcer les limites &agrave; certaines valeurs
+au moyen d’un fichier. (voir l’option <B><A HREF="#-veclim">–vectlim</A></B>)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>-<B>vecshade</B></TD>
+
+<TD>Grise les parties "spval" sur un dessin de vecteur. En cas de grille
+irr&eacute;guliere, cette option ne marche qu'avec l'option <A HREF="#-gridxy">-<B>gridxy</B></A>
+(pas <A HREF="#-grid">-<B>grid</B></A>).</TD>
+</TR>
+</TABLE>
+
+<H2>
+&nbsp;&nbsp;&nbsp; 6.3 Texte d'information</H2>
+<I>Note :&nbsp; La plupart des options suivantes ne sont, en fait, qu’un
+acc&egrave;s direct &agrave; certaines constantes de NCAR graphics. Veuillez
+vous r&eacute;f&eacute;rer au document &laquo; Vectors, a vector field
+plotting utility &raquo; pp. 31 &agrave; 56 pour plus de d&eacute;tails.
+Lorsqu’une option correspond directement &agrave; une constante NCAR, le
+nom de la constante est indiqu&eacute;.</I>
+<BR>Deux blocs de texte sont affich&eacute;s par d&eacute;faut. Ils indiquent
+la taille des vecteurs minimum et maximum, selon le format <FONT COLOR="#000000">ci-dessous
+:</FONT>&nbsp;<BR>
+<BR>
+<CENTER><IMG SRC="vecteurs.jpg" HEIGHT=90 WIDTH=300></CENTER>
+
+
+<P>Les options suivantes permettent de modifier le contenu et la position
+des textes. Notez que dans les noms d’options, <I>mn</I> r&eacute;f&egrave;re
+au vecteur minimum et <I>mx </I>au vecteur maximum.
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP WIDTH="40%">-<B>vecmns</B> <I>real</I>&nbsp;
+
+<P>-<B>vecmxs</B> <I>real</I></TD>
+
+<TD>Text Bloc Character Size (MNS et MXS).Taille des caract&egrave;res
+utilis&eacute;s dans les blocs de texte.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecmnt</B> <I>string</I>&nbsp;
+
+<P>-<B>vecmxt</B> <I>string</I></TD>
+
+<TD>Vector Text String (character*36) (MNT et MXT). Cha&icirc;nes de caract&egrave;res
+des blocs de texte. D&eacute;fauts : vecteur minimum et Vecteur maximum,
+avec une fl&egrave;che sous les valeurs. (voir plus haut)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecmnxy</B> <I>real real</I>&nbsp;
+
+<P>-<B>vecmxxy</B> <I>real real</I></TD>
+
+<TD>Coordonn&eacute;es des blocs de texte. (MNX, MNY, MXX et MXY). Voir
+l’option –<B>vecmnp</B> pour savoir &agrave; quelle partie du texte correspondent
+les coordonn&eacute;es.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecmnp</B> <I>integer</I>&nbsp;
+
+<P>-<B>vecmxp</B> <I>integer</I></TD>
+
+<TD>Vector Text Bloc Positioning (MNP et MXP).&nbsp;
+<BR>Indique quel point d’un bloc de texte est indiqu&eacute; par les coordonn&eacute;es
+des options pr&eacute;c&eacute;dentes.&nbsp;
+<BR>&nbsp;
+
+<P><IMG SRC="vecteurs2.jpg" HEIGHT=120 WIDTH=180 ALIGN=LEFT>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H2>
+6.4 Autres options</H2>
+&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD>-<B>veclev</B> <I>integer</I></TD>
+
+<TD>Permet de sp&eacute;cifier les niveaux du fichier sp&eacute;cifi&eacute;
+par <B><A HREF="#-vecdataxy">-vecdata </A></B>&agrave; tracer.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecvpo</B> <I>integer</I></TD>
+
+<TD>Permet le choix de l'origine des fl&egrave;ches dans un dessin de vecteurs.
+Les possibilit&eacute;s sont:
+
+<P><I>integer</I> &lt; 0 : La t&ecirc;te du vecteur est au point de grille.
+
+<P><I>integer </I>= 0 : Le centre du vecteur est au point de grille (d&eacute;faut)
+
+<P><I>integer </I>> 0$ : La queue du vecteur est au point de grille.
+
+<P>Cette option (surtout avec <I>integer</I> > 0) s'av&egrave;re int&eacute;ressante
+pour visualiser un profil de vitesse.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>vecnotrace</B></TD>
+
+<TD>Permet de d&eacute;finir des vecteurs avec <A HREF="#-vecdataxy">-<B>vecdataxy</B></A>
+ou autre, sans les tracer. Utile si l'on utilise juste <A HREF="#-clrdatamod">-<B>clrdatamod</B>,</A>
+qui passera le module des vecteurs en clrdata, et &eacute;vitera la superposition
+des fl&egrave;ches par dessus.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H1>
+7.&nbsp;<A NAME="Texte"></A>Texte</H1>
+Jusqu’&agrave; 10 cha&icirc;nes de caract&egrave;res peuvent &ecirc;tre
+d&eacute;finies lors de l’appel de <I>chart</I>. Il est aussi possible,
+&agrave; l’int&eacute;rieur de chaque cha&icirc;ne, d’utiliser des variables
+qui seront remplac&eacute;es par des valeurs internes lors de la production
+du dessin. On peut, par exemple, mettre dans un titre le num&eacute;ro
+de la couche trac&eacute;e :
+
+<P>&nbsp;"Num&eacute;ro de couche : @CLR_ICOU@"
+
+<P>Lorsque le titre est ajout&eacute; au dessin, la variable CLR_ICOU est
+remplac&eacute;e par le num&eacute;ro de la couche. Il est possible de
+cr&eacute;er des cha&icirc;nes de caract&egrave;res dont le contenu d&eacute;pend
+du fichier trait&eacute;.
+
+<P>Il est aussi possible d’utiliser les caract&egrave;res de commande reconnus
+par la fonction PLCHHQ de NCAR. Le caract&egrave;re de contr&ocirc;le est
+| (pipe en UNIX). Par exemple, pour obtenir l’effet suivant :
+
+<P>&nbsp;3.258x10<SUP>-2</SUP> m<SUP>2</SUP>s<SUP>2</SUP>
+
+<P>On utiliserait la syntaxe suivante : "3.258x10|S|-2|N|m|S|2|N|s|S|2"
+
+<P>Dans cet exemple, S est la commande plotchar Superscript et N est la
+commande de retour &agrave; la normale. R&eacute;f&eacute;rez-vous au document
+&laquo; Plotchar, a character-plotting package &raquo;, section 3.10 Functions
+Codes, pages 13 &agrave; 18 pour plus de d&eacute;tails.
+<BR>&nbsp;
+<H2>
+7.1 Liste des variables</H2>
+Voici la liste des variables auxquelles <I>chart</I> donne acc&egrave;s.
+Le nom de chaque variable d&eacute;bute par un pr&eacute;fixe d&eacute;crivant
+&agrave; quel fichier de donn&eacute;es elle se rapporte. Pour utiliser
+ces variables dans une cha&icirc;ne de caract&egrave;res, mettez simplement
+son nom entre @.
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 WIDTH="100%" >
+<TR>
+<TD><I><FONT SIZE=+1>Entiers</FONT></I></TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>COUCHE</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>num&eacute;ro de la couche</TD>
+</TR>
+
+<TR>
+<TD>TSTEP</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>pas de temps</TD>
+</TR>
+
+<TR>
+<TD>CLR_NX</TD>
+
+<TD>CNT_NX</TD>
+
+<TD>VEC_NX</TD>
+
+<TD>nombre de points en X</TD>
+</TR>
+
+<TR>
+<TD>CLR_NY</TD>
+
+<TD>CNT_NY</TD>
+
+<TD>&nbsp;VEC_NY</TD>
+
+<TD>nombre de points en Y</TD>
+</TR>
+
+<TR>
+<TD>CLR_NZ</TD>
+
+<TD>CNT_NZ</TD>
+
+<TD>VEC_NZ</TD>
+
+<TD>nombre de couches</TD>
+</TR>
+
+<TR>
+<TD>CLR_EXP</TD>
+
+<TD>CNT_EXP</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>exposant (puissance de 10)</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 WIDTH="100%" >
+<TR>
+<TD><I><FONT SIZE=+1>R&eacute;els</FONT></I></TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>CLR_MIN</TD>
+
+<TD>CNT_MIN</TD>
+
+<TD>VEC_MIN</TD>
+
+<TD>valeur minimale</TD>
+</TR>
+
+<TR>
+<TD>CLR_MAX</TD>
+
+<TD>CNT_MAX</TD>
+
+<TD>VEC_MAX</TD>
+
+<TD>valeur maximale</TD>
+</TR>
+
+<TR>
+<TD>CLR_SPVAL</TD>
+
+<TD>CNT_SPVAL</TD>
+
+<TD>VEC_SPVAL</TD>
+
+<TD>valeur sp&eacute;ciale</TD>
+</TR>
+
+<TR>
+<TD>CLR_DX</TD>
+
+<TD>CNT_DX</TD>
+
+<TD>VEC_DX</TD>
+
+<TD>degr&eacute;s/points de grille en X</TD>
+</TR>
+
+<TR>
+<TD>CLR_DY</TD>
+
+<TD>CNT_DY</TD>
+
+<TD>VEC_DY</TD>
+
+<TD>degr&eacute;s/points de grille en Y</TD>
+</TR>
+
+<TR>
+<TD>CLR_TIME</TD>
+
+<TD>CNT_TIME</TD>
+
+<TD>VEC_TIME</TD>
+
+<TD>champ H dans le BIMG</TD>
+</TR>
+
+<TR>
+<TD>CLR_DEPTH</TD>
+
+<TD>CNT_DEPTH</TD>
+
+<TD>VEC_DEPTH</TD>
+
+<TD>profondeur de la couche</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 WIDTH="100%" >
+<TR>
+<TD><I><FONT SIZE=+1>Texte</FONT></I></TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>DATE</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>&nbsp;</TD>
+
+<TD>date de cr&eacute;ation du dessin</TD>
+</TR>
+
+<TR>
+<TD>CLR_STR1</TD>
+
+<TD>CNT_STR1</TD>
+
+<TD>VEC_STR1</TD>
+
+<TD>record 1, BIMG</TD>
+</TR>
+
+<TR>
+<TD>CLR_STR2</TD>
+
+<TD>CNT_STR2&nbsp;</TD>
+
+<TD>VEC_STR2</TD>
+
+<TD>record 2, BIMG</TD>
+</TR>
+
+<TR>
+<TD>CLR_STR3</TD>
+
+<TD>CNT_STR3</TD>
+
+<TD>VEC_STR3</TD>
+
+<TD>record 3, BIMG</TD>
+</TR>
+
+<TR>
+<TD>CLR_STR4</TD>
+
+<TD>CNT_STR4</TD>
+
+<TD>VEC_STR4</TD>
+
+<TD>record 4, BIMG</TD>
+</TR>
+
+<TR>
+<TD>CLR_JCNES</TD>
+
+<TD>CNT_JCNES</TD>
+
+<TD>VEC_JCNES</TD>
+
+<TD>traduit un jour CNES en texte</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H2>
+7.2. Liste des options</H2>
+
+<TABLE BORDER=0 CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP><A NAME="-string"></A>-<B>string</B> <I>X Y S A string</I>&nbsp;</TD>
+
+<TD>Ajoute une cha&icirc;ne de caract&egrave;res au dessin. Les param&egrave;tres
+sont :&nbsp;
+<UL>
+<LI>
+X, Y&nbsp;&nbsp;&nbsp;&nbsp; coordonn&eacute;es entre 0.0 et 1.0 sp&eacute;cifiant
+la position du texte.&nbsp;</LI>
+
+<LI>
+S (size) taille des caract&egrave;res. (1.0 = taille normale)&nbsp;</LI>
+
+<LI>
+A (align) d&eacute;crit &agrave; quelle extr&eacute;mit&eacute; du texte
+correspond la position (X, Y) :&nbsp;</LI>
+
+<LI>
+</LI>
+
+<BR>-1: c&ocirc;t&eacute; gauche&nbsp;
+<BR>0&nbsp; : centre&nbsp;
+<BR>1&nbsp; : c&ocirc;t&eacute; droit&nbsp;</UL>
+
+<UL>
+<LI>
+string texte comportant au maximum 256 caract&egrave;res.&nbsp;</LI>
+
+<LI>
+</LI>
+
+<BR>(attention, tenir compte de la taille des variables)&nbsp;</UL>
+</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="20%"><A NAME="-format"></A>-<B>format</B> <I>var</I>
+<I>fmt</I></TD>
+
+<TD>Modifie le format d’une variable num&eacute;rique. Permet aussi de
+contr&ocirc;ler le format de plusieurs &eacute;l&eacute;ments d’un dessin.
+(voir liste ci-dessous).&nbsp;
+<UL>
+<LI>
+var : nom de la variable dont on d&eacute;sire modifier le format.&nbsp;</LI>
+
+<LI>
+fmt : format, de type fortran 77 standard. Les formats support&eacute;s
+sont I, F et E.&nbsp;</LI>
+</UL>
+Exemple, pour modifier le format des nombres apparaissant sous la barre
+de palette :&nbsp;
+
+<P>-<B>format</B> <I>PALETTE f5.2</I>&nbsp;
+
+<P>En plus de pouvoir modifier le format de toutes les variables &eacute;num&eacute;r&eacute;es
+plus haut, il est possible d’acc&eacute;der aux formats des champs suivants
+:&nbsp;
+
+<P>X_AXIS&nbsp; axe horizontal&nbsp;
+<BR>Y_AXIS&nbsp; axe vertical&nbsp;
+<BR>PALETTE barre de palette&nbsp;</TD>
+</TR>
+</TABLE>
+<I>note : pour &eacute;liminer compl&egrave;tement la graduation sur un
+des axes, utilisez –noxlab ou –noylab.</I>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP WIDTH="20%">-<B>font</B> <I>police</I></TD>
+
+<TD>S&eacute;lectionne la police de caract&egrave;res qui sera utilis&eacute;e
+pour tout le dessin. Consultez le document &laquo; Plotchar – a character
+plotting package &raquo; page 22 pour la liste des polices disponibles.
+Les polices donnant les meilleurs r&eacute;sultats &agrave; l’impression
+sont :&nbsp;
+
+<P>21 HELVETICA&nbsp;
+<BR>22 HELVETICA-BOLD&nbsp;
+<BR>23 TIMES-ROMAN&nbsp;
+<BR>24 TIMES-BOLD&nbsp;
+
+<P>Il est &agrave; noter que la police peut &ecirc;tre chang&eacute;e &agrave;
+l’int&eacute;rieur m&ecirc;me d’une cha&icirc;ne de caract&egrave;res,
+avec la commande Fn o&ugrave; n est un num&eacute;ro de police. (les num&eacute;ros
+sont donn&eacute;s dans la liste de la page 22 cit&eacute;e plus haut).
+Par exemple, vous avez s&eacute;lectionn&eacute; la police HELVETICA et
+vous d&eacute;sirez mettre un mot en bold dans une cha&icirc;ne de caract&egrave;res.&nbsp;
+
+<P>A l’appel de <I>chart</I> :&nbsp;
+
+<P>-<B>font</B> HELVETICA&nbsp;
+<BR>-<B>string</B> .2 .9 1. –1 &sup2;un |F22|mot |F21|en bold&sup2;&nbsp;
+
+<P>donnera :&nbsp;
+
+<P>un <B>mot</B> en bold&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H1>
+8. Ajouts de lignes ou de caract&egrave;res en surimpression</H1>
+Il est possible de faire appara&icirc;tre des lignes ou des marqueurs en
+surimpression au dessus de la carte.
+<BR>Pour &eacute;crire le nom d'un continent, pour positionner un mouillage,
+ou pour d&eacute;finir une section hydrographique par exemple.
+<BR>&nbsp;
+<TABLE CELLSPACING=40 WIDTH="100%" >
+<TR>
+<TD VALIGN=TOP>-<B>overdata</B> <I>fichier</I></TD>
+
+<TD>Superpose &agrave; la carte des lignes polygonales d&eacute;crites
+dans <I>fichier</I>. Le format est tr&egrave;s simple: c'est un fichier
+ASCII, chaque ligne donnant la position d'un point en longitude latitude.
+Si on d&eacute;sire plusieurs segments, il faut ins&eacute;rer entre les
+segments, une ligne 9999 9999.</TD>
+</TR>
+
+<TR>
+<TD>-<B>overlw</B></TD>
+
+<TD>fixe l'&eacute;paisseur de trait pour les lignes superpos&eacute;es
+(d&eacute;faut 1).</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>overmark</B>&nbsp; <I>fichier</I></TD>
+
+<TD>Superpose &agrave; la carte des marqueurs dont la position est donn&eacute;e
+dans fichier}. M&ecirc;me format de fichier que pour -overdata.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>overmk</B> <I>integer</I></TD>
+
+<TD>sp&eacute;cifie le type de marqueur &agrave; utiliser selon la norme
+GKS :
+<BR>&nbsp;1 = .&nbsp;
+<BR>&nbsp;2 = +&nbsp;
+<BR>&nbsp;3 = *&nbsp;
+<BR>&nbsp;4 = o&nbsp;
+<BR>&nbsp;5 = X&nbsp;
+<BR>Par d&eacute;faut le marqueur est 4 (petit cercle).</TD>
+</TR>
+
+<TR>
+<TD>-<B>overmksc</B> <I>real</I></TD>
+
+<TD>sp&eacute;cifie la taille du marqueur. Par d&eacute;faut, 1.</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>overclr</B> <I>integer</I></TD>
+
+<TD>Donne l'index de couleur de la courbe en overlay, index 1 &eacute;tant
+le premier de la palette visible (ie indice 20 du fichier palette).</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>-<B>overmkclr</B> <I>integer</I></TD>
+
+<TD>Donne l'index de couleur des marqueurs en overlay, index 1 &eacute;tant
+le premier de la palette visible (ie indice 20 du fichier palette).</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H1>
+9.&nbsp;<A NAME="Formats"></A>Formats des fichiers</H1>
+Cette section d&eacute;crit les formats de tous les fichiers qui peuvent
+&ecirc;tre donn&eacute;s en entr&eacute;e &agrave; <I>chart</I>. Plusieurs
+formats ont chang&eacute; depuis la version 2.0, il est donc recommand&eacute;
+de lire le texte &laquo; release notes &raquo; pour la mise &agrave; jour
+des fichiers d&eacute;j&agrave; existants.
+<BR>&nbsp;
+<H2>
+9.1.&nbsp;<A NAME="Palette de couleurs"></A>Palette de couleurs</H2>
+Un fichier de palette se divise en deux parties : les couleurs sp&eacute;ciales,
+attribu&eacute;es &agrave; des &eacute;l&eacute;ments du dessin tels que
+les continents ou les oc&eacute;ans, et les couleurs r&eacute;serv&eacute;es
+aux donn&eacute;es, qui appara&icirc;tront dans la barre de palette.
+
+<P>La d&eacute;finition d’une couleur comporte quatre &eacute;l&eacute;ments
+: son index et les quantit&eacute;s de rouge, vert et bleu. L’index est
+un nombre entre 0 et 99, alors que les autres valeurs doivent &ecirc;tre
+situ&eacute;es entre 0.0 et 1.0. Par exemple, pour d&eacute;finir l’index
+10 comme &eacute;tant du vert pur, on mettrait la ligne suivante dans le
+fichier de palette :
+<PRE>&nbsp; 10 0.0 1.0 0.0</PRE>
+Les index 0 &agrave; 19 sont r&eacute;serv&eacute;s pour certains &eacute;l&eacute;ments
+du dessin. Les index actuellement d&eacute;finis sont :
+<BLOCKQUOTE>
+<DL>
+<DD>
+0 : background</DD>
+
+<DD>
+1 : foreground</DD>
+
+<DD>
+2 : continents</DD>
+
+<DD>
+3 : valeur sp&eacute;ciale</DD>
+
+<DD>
+4 : oc&eacute;ans</DD>
+
+<DD>
+5 : isocontours</DD>
+
+<DD>
+6 : vecteurs</DD>
+
+<DD>
+7 : contours des continents</DD>
+</DL>
+</BLOCKQUOTE>
+Les autres index sont r&eacute;serv&eacute;s pour des besoins futurs. Ils
+peuvent &ecirc;tre utilis&eacute;s pour certaines options de <I>chart</I>,
+par exemple:
+
+<P>&nbsp; -<B>cntilb</B> Information Label Color
+<BR>&nbsp; -<B>cntlbc</B> Label Box Color
+
+<P>Le reste des index, soit de 20 &agrave; 99, est utilis&eacute; pour
+d&eacute;finir les couleurs attribu&eacute;es aux donn&eacute;es. Les index
+doivent &ecirc;tre d&eacute;finis dans un ordre croissant, mais il n’est
+pas n&eacute;cessaire de d&eacute;finir tous les index. <I>Chart</I> interpole
+automatiquement les couleurs entre les index qui ne sont pas cons&eacute;cutifs.
+Par exemple, pour obtenir un d&eacute;grad&eacute; de 10 couleurs variant
+du noir au magenta:
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=15 >
+<TR>
+<TD>
+<PRE>20</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>29</PRE>
+</TD>
+
+<TD>
+<PRE>1.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>1.0</PRE>
+</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>Finalement, il est possible d’ins&eacute;rer des lignes blanches entre
+les index et d’ajouter des lignes de commentaires commen&ccedil;ant par
+le caract&egrave;re #. Il est aussi &agrave; noter que tout ce qui se trouve
+&agrave; droite d’une d&eacute;finition de couleur n’est pas pris en compte.
+Un fichier de palette pourrait donc se lire comme suit :
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=15 >
+<TR>
+<TD COLSPAN="5">
+<PRE># Palette pour les fichiers EKE&nbsp;</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>000</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>background</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>001</PRE>
+</TD>
+
+<TD>
+<PRE>1.0</PRE>
+</TD>
+
+<TD>
+<PRE>1.0</PRE>
+</TD>
+
+<TD>
+<PRE>1.0</PRE>
+</TD>
+
+<TD>
+<PRE>foreground</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>002</PRE>
+</TD>
+
+<TD>
+<PRE>0.5</PRE>
+</TD>
+
+<TD>
+<PRE>0.5</PRE>
+</TD>
+
+<TD>
+<PRE>0.5</PRE>
+</TD>
+
+<TD>
+<PRE>continents</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>005</PRE>
+</TD>
+
+<TD>
+<PRE>1.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>0.0</PRE>
+</TD>
+
+<TD>
+<PRE>isocontours</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD COLSPAN="5">
+<PRE># couleurs pour les donn&eacute;es</PRE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>020</PRE>
+</TD>
+
+<TD>
+<PRE>2.3</PRE>
+</TD>
+
+<TD>
+<PRE>4.4</PRE>
+</TD>
+
+<TD>
+<PRE>1.2</PRE>
+</TD>
+
+<TD>&nbsp;
+<BR>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>
+<PRE>021</PRE>
+</TD>
+
+<TD>
+<PRE>4.2</PRE>
+</TD>
+
+<TD>
+<PRE>2.2</PRE>
+</TD>
+
+<TD>
+<PRE>5.8</PRE>
+</TD>
+
+<TD>&nbsp;
+<BR>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<H2>
+9.2.&nbsp;<A NAME="Fichier de configuration"></A>Fichier de configuration</H2>
+Plut&ocirc;t que de toujours taper tous les arguments sur la ligne de commande,
+il est possible de cr&eacute;er un fichier de configuration. La syntaxe
+en est tr&egrave;s simple, elle est la m&ecirc;me que pour la ligne de
+commande, la seule diff&eacute;rence &eacute;tant qu’il ne doit y avoir
+qu’une seule option par ligne. Toutes les options peuvent &ecirc;tre utilis&eacute;es
+dans un fichier de configuration, m&ecirc;me les options telles que –<B>clrdata</B>.
+
+<P>L’option <B>–s</B> est utilis&eacute;e pour indiquer &agrave; <I>chart</I>
+qu’il doit lire un fichier de configuration. D’autres options peuvent &ecirc;tre
+utilis&eacute;es en m&ecirc;me temps que <B>–s</B> sur la ligne de commande.
+Les options sont lues de droite &agrave; gauche, et les derni&egrave;res
+options lues ont priorit&eacute;. Par exemple, on peut cr&eacute;er un
+fichier de configuration qui affiche les trois premiers records d’un fichiers
+BIMG. Soit le fichier entete.conf :
+<DL>
+<PRE>-string 0.05 0.94 1-1 &sup2;@CLR_STR1@&sup2;&nbsp;
+-string 0.05 0.90 1-1 &sup2;@CLR_STR2@&sup2;&nbsp;
+-string 0.05 0.86 1-1 &sup2;@CLR_STR3@&sup2;</PRE>
+</DL>
+On pourrait ensuite utiliser ce fichier lors de l’appel de <I>chart</I>,
+de la fa&ccedil;on suivante :
+<PRE>&nbsp; chart –s entete.conf –clrdata topex.bimg –zoom -82 -62 35 45</PRE>
+Comme dans le cas d’une palette, les lignes blanches et les lignes de commentaires
+commen&ccedil;ant par # sont accept&eacute;es. Par contre, il ne faut rien
+mettre &agrave; la fin d’une ligne d’option. Voici un exemple de fichier
+de configuration qui ajoute la bathym&eacute;trie et un titre, ainsi que
+le type d’unit&eacute;s &agrave; un trac&eacute; d’isocontours. (appelons
+le bathy.set)
+<PRE># fichier de configuration</PRE>
+
+<PRE>-clrdata bathy.bimg&nbsp;
+-p psi.2.pal&nbsp;
+-string 0.05 0.90 2 –1 &sup2;Isocontours sur fond de bathymetrie&sup2;&nbsp;
+-string 0.95 0.06 0.6 1 &sup2;Unites : m|S|2|N|s|S|-1| x10|S|@CNT_EXP@&sup2;</PRE>
+Ce fichier pourrait &ecirc;tre utilis&eacute; dans une commande telle que
+:
+<PRE>&nbsp; chart –cntdata topex.bimg –cntexp 4 –s bathy.set</PRE>
+
+<H2>
+9.3.&nbsp;<A NAME="Format bimg"></A>Format BIMG</H2>
+Un fichier BIMG est compos&eacute; de deux parties principales : une ent&ecirc;te
+d&eacute;crivant le contenu du fichier et les donn&eacute;es d&eacute;crites.
+Une doc de Jean-Marc Molines est disponible si vous d&eacute;sirez une
+description plus d&eacute;taill&eacute;e du format.
+
+<P>Les 6 premiers records forment l’ent&ecirc;te.
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=15 >
+<TR>
+<TD WIDTH="150">Records 1 &agrave; 4:</TD>
+
+<TD>character*80</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD>Quatre cha&icirc;nes de caract&egrave;res pouvant servir &agrave; d&eacute;crire
+le fichier.&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=15 >
+<TR>
+<TD WIDTH="150">Record 5:</TD>
+
+<TD>integer (6)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD>NX : nombre de points en X&nbsp;
+<BR>NY : nombre de points en Y&nbsp;
+<BR>NZ : nombre de couches&nbsp;
+<BR>NT : nombre de pas de temps&nbsp;
+<BR>NDIM : nombre de dimensions par couche (1-3)&nbsp;
+<BR>ICOD : code identifiant le type de donn&eacute;es. Utilis&eacute; pour
+les configurations par d&eacute;faut. (voir <FONT COLOR="#FF0000">section
+10</FONT>)&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=15 >
+<TR>
+<TD WIDTH="150">Record 6 :</TD>
+
+<TD>real (5)</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD>X1 : longitude du coin inf&eacute;rieur gauche&nbsp;
+<BR>Y1 : latitude du coin inf&eacute;rieur gauche&nbsp;
+<BR>DX : nombre de degr&eacute;s par point de grille (longitude)&nbsp;
+<BR>DY : nombre de degr&eacute;s par point de grille (latitude)&nbsp;
+<BR>SPVAL : valeur sp&eacute;ciale&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=15 >
+<TR>
+<TD WIDTH="150">Record 7 :</TD>
+
+<TD>real (NZ)&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD>P(NZ) : tableau contenant la profondeur de chaque couche.&nbsp;</TD>
+</TR>
+</TABLE>
+Par la suite, le nombre de records d&eacute;pend de NZ, NT et NDIM.
+
+<P>Voici un exemple de code FORTRAN pour cr&eacute;er un fichier BIMG.
+Le fichier contiendra 4 couches de 2 dimensions, la r&eacute;solution est
+de un sixi&egrave;me de degr&eacute; et la zone couverte s’&eacute;tend
+de -82&deg;E &agrave; –2&deg;E et de 20&deg;N &agrave; 60&deg;N.
+<DL>
+<PRE>implicit none&nbsp;
+integer nxx, nyy, na&nbsp;
+parameter (nxx=700, nyy=400, na=20)</PRE>
+
+<PRE>integer k, i, j, t&nbsp;
+integer couche</PRE>
+
+<PRE>real vitesse_x(nxx, nyy, na)&nbsp;
+real vitesse_y(nxx, nyy, na)&nbsp;
+real prof(na)</PRE>
+
+<PRE>character*80 record_str&nbsp;
+integer nx, ny, nz, day, icod, ndim&nbsp;
+real lonmin, latmin, dx, dy, spval</PRE>
+
+<PRE>nx = 480&nbsp;
+ny = 280&nbsp;
+nz = 4&nbsp;
+nt = 1&nbsp;
+ndim = 2&nbsp;
+icod = 1</PRE>
+
+<PRE>lonmin = -82.0&nbsp;
+latmin = 20.0&nbsp;
+dx&nbsp; = 1.0/6.0&nbsp;
+dy&nbsp; = 1.0/6.0&nbsp;
+spval&nbsp; = 999999</PRE>
+
+<PRE>prof(1) = 100.0&nbsp;
+prof(2) = 300.0&nbsp;
+prof(3) = 450.0&nbsp;
+prof(4) = 4000.0</PRE>
+
+<PRE>open(100, file=fileout, form=’unformatted’)</PRE>
+
+<PRE>record_str = ‘commentaire ligne 1’&nbsp;
+write(100) record_str&nbsp;
+record_str = ‘commentaire ligne 2’&nbsp;
+write(100) record_str&nbsp;
+record_str = ‘commentaire ligne 3’&nbsp;
+write(100) record_str&nbsp;
+record_str = ‘commentaire ligne 4’&nbsp;
+write(100) record_str</PRE>
+
+<PRE>write(100) nx, ny, nz, nt, ndim, icod</PRE>
+
+<PRE>write(100) lonmin, latmin, dx, dy, spval</PRE>
+
+<PRE>write(100) (prof(couche), couche=1, nz)</PRE>
+
+<PRE>do t=1, nt&nbsp;
+write(100) t&nbsp;
+do couche=1, nz&nbsp;
+write(100) ((vitesse_x(i, j, couche), i=1, nx), j=1, ny)&nbsp;
+write(100) ((vitesse_x(i, j, couche), i=1, nx), j=1, ny)&nbsp;
+enddo&nbsp;
+enddo</PRE>
+
+<PRE>close(100)</PRE>
+</DL>
+Vous pouvez ensuite utiliser la commande <B>bimgchk</B> pour v&eacute;rifier
+l’ent&ecirc;te du fichier que vous venez de cr&eacute;er.
+<H2>
+9.4. Grille irr&eacute;guli&egrave;re</H2>
+Une grille irr&eacute;guli&egrave;re est d&eacute;finie au moyen d’un fichier
+BIMG comportant deux couches. La couche 1 contient la coordonn&eacute;e
+en X de chaque point et la couche 2 la coordonn&eacute;e en Y. Il y a tr&egrave;s
+peu de champs &agrave; remplir pour cr&eacute;er un fichier grille, il
+faut seulement d&eacute;finir NX, NY et NZ (NZ &eacute;tant 2).
+
+<P>Pour &ecirc;tre compatible avec un fichier de donn&eacute;es, un fichier
+grille doit contenir le m&ecirc;me nombre de points en X et Y.
+
+<P><I><FONT COLOR="#FF0000">Note : actuellement, le type de grille support&eacute;
+est une grille semi-irr&eacute;guli&egrave;re, c’est-&agrave;-dire que
+dx ne d&eacute;pend que de i et dy ne d&eacute;pend que de j. (voir la
+figure ci-dessous)</FONT></I>
+
+<P><FONT COLOR="#FF0000">Pour plus de d&eacute;tails sur ce type de grille,
+r&eacute;f&eacute;rez-vous au document &laquo; Contouring and Mapping Tutorial
+&raquo;, Cp 3.4 Irregularly Spaced Data, page 226.</FONT>
+<H2>
+9.5.&nbsp;<A NAME="Masque"></A>Masque</H2>
+Un fichier masque est utile lorsqu’on d&eacute;sire qu’une r&eacute;gion
+soit ignor&eacute;e par <I>chart</I>, sans avoir &agrave; remplacer cette
+r&eacute;gion par <I>spval</I> dans le fichier. Un fichier masque est un
+fichier BIMG ne comportant qu’une seule couche. Pour &ecirc;tre compatible
+avec un fichier de donn&eacute;es, un fichier masque doit contenir le m&ecirc;me
+nombre de points en X et Y.
+
+<P>Un fichier masque contient la valeur 0 ou 1 &agrave; chaque point de
+grille. Lors de la lecture d’un fichier BIMG auquel a &eacute;t&eacute;
+rattach&eacute; un fichier masque, chaque point o&ugrave; le masque contient
+1 sera remplac&eacute; par <I>spval</I>. La valeur sp&eacute;ciale utilis&eacute;e
+est celle du fichier de donn&eacute;es, les seuls champs utilis&eacute;s
+dans le fichier masque dont NX, NY et NZ et le record contenant les donn&eacute;es.
+(NZ valant 1)
+<BR>Notez bien qu’il faut quand m&ecirc;me remplir les autres champs par
+des valeurs bidon lors de la cr&eacute;ation du masque.
+<BR>&nbsp;
+<BR>&nbsp;
+<H1>
+10.&nbsp;<A NAME="Variables"></A>Variables d’environnement</H1>
+Lorsque vous aurez acquis une certaine exp&eacute;rience de <I>chart</I>,
+vous aurez sans doute cr&eacute;&eacute; plusieurs fichiers de palettes,
+de limites et de configuration. Pour &eacute;viter d’avoir des fichiers
+dispers&eacute;s dans tous les recoins de vos r&eacute;pertoires, il vous
+est fortement recommand&eacute; de les regrouper dans des r&eacute;pertoires
+d&eacute;di&eacute;s.
+
+<P>Par exemple, vous pourriez cr&eacute;er trois r&eacute;pertoires, /PALETTE,
+/LIMITE et /CONFIG. Une fois cette &eacute;tape r&eacute;alis&eacute;e
+et tous les fichiers transf&eacute;r&eacute;s dans les r&eacute;pertoires
+appropri&eacute;s, vous n’aurez plus qu’&agrave; d&eacute;finir quelques
+variables d’environnement dans votre fichier .cshrc pour indiquer &agrave;
+<I>chart</I> o&ugrave; se trouvent vos r&eacute;pertoires.
+
+<P>Six variables d’environnement peuvent &ecirc;tre d&eacute;finies.
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD VALIGN=TOP>NCAR_ROOT:</TD>
+
+<TD>Chart est construit sur la librairie NCAR et requiert que cette variable
+d’environnement soit d&eacute;finie. Sur la plupart des machines, le r&eacute;pertoire
+NCAR est le suivant:&nbsp; /usr/local/NCARG3.2&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>BIMG_PALDIR:</TD>
+
+<TD>Indique le r&eacute;pertoire dans lequel se trouvent vos palettes.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>BIMG_LIMDIR:</TD>
+
+<TD>Indique le r&eacute;pertoire dans lequel se trouvent vos fichiers de
+limites.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>BIMG_DATDIR:</TD>
+
+<TD>Indique le r&eacute;pertoire dans lequel se trouvent vos fichiers de
+donn&eacute;es.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>BIMG_STSDIR :</TD>
+
+<TD>Indique le r&eacute;pertoire dans lequel se trouvent vos fichiers de
+configuration.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD VALIGN=TOP>BIMG_ROOT :</TD>
+
+<TD>Plusieurs palettes et configurations par d&eacute;faut existent d&eacute;j&agrave;
+et sont utilis&eacute;es par plusieurs personnes. Ce r&eacute;pertoire
+contient les configurations, palettes et limites communes &agrave; plusieurs
+personnes et &eacute;vite d’avoir plusieurs copies des fichiers. Il contient
+l’aborescence suivante :&nbsp;
+<TABLE BORDER=0 CELLSPACING=40 >
+<TR>
+<TD>BIMG_ROOT&nbsp;</TD>
+
+<TD>/pal
+
+<P>/lim&nbsp;
+
+<P>/dat
+
+<P>/sts&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;</TD>
+</TR>
+</TABLE>
+Lorsque vous donnez un fichier en argument &agrave; <I>chart</I>, il le
+cherchera d’abord dans le r&eacute;pertoire courant, puis dans l’un de
+vos r&eacute;pertoires personnels, et finalement dans le r&eacute;pertoire
+syst&egrave;me (BIMG_ROOT).
+
+<P>Par exemple, si toutes vos palettes se trouvent dans le r&eacute;pertoire
+/sgi2/brown/bimg/PALETTE, vous devriez ajouter la ligne suivante &agrave;
+votre fichier .<I>cshrc</I> :
+<PRE>&nbsp;setenv BIMG_PALDIR /sgi2/brown/bimg/PALETTE</PRE>
+Puis, au lieu de taper la ligne de commande suivante :
+<PRE>&nbsp;chart –p /sgi2/brown/bimg/PALETTE/psi.pal –clrdata topex.bimg</PRE>
+Vous n’aurez plus qu’&agrave; taper :
+<PRE>&nbsp;chart –p psi.pal –clrdata topex.bimg</PRE>
+Si un fichier psi.pal existe dans le r&eacute;pertoire courant, il sera
+lu. Sinon, il sera recherch&eacute; dans $BIMG_PALDIR.
+<BR>&nbsp;
+<BR>&nbsp;
+</BODY>
+</HTML>

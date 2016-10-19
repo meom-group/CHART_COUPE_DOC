@@ -1,0 +1,257 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="Anne de Miranda">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+   <TITLE>couleurs</TITLE>
+</HEAD>
+<BODY TEXT="#993300" BGCOLOR="#FFFFCC" LINK="#000066" VLINK="#551A8B" ALINK="#3366FF">
+
+<CENTER>
+<H1>
+<A NAME="Couleurs"></A>Couleurs</H1></CENTER>
+
+<HR WIDTH="100%">
+<BR>Toutes les options se rapportant &agrave; la couleur commence par le
+pr&eacute;fixe clr.
+<BR>Pour ceux qui connaissent d&eacute;j&agrave; chart, le nom des anciennes
+options
+<BR>correspondantes est indiqu&eacute; &agrave; la section 11.2 et peut
+toujours &ecirc;tre employ&eacute;,
+<BR>mais il est recommand&eacute; d’utiliser la nouvelle syntaxe.
+
+<P>Si aucune palette de couleurs n’est sp&eacute;cifi&eacute;e, chart utilisera
+une palette interne,
+<BR>d&eacute;finissant le fond blanc, le texte et les lignes noires, ainsi
+que les continents marron.
+<BR>Selon le nombre de couleurs, 80 au maximum, chart calcule des limites,
+<BR>qui sont les valeurs min et max entre lesquelles une certaine couleur
+est
+<BR>attribu&eacute;e &agrave; une donn&eacute;e. Les limites peuvent &ecirc;tre
+calcul&eacute;es selon deux
+<BR>m&eacute;thodes ou &ecirc;tre lues dans un fichier. (voir les options
+-<B>clrmet</B> et -<B>clrlim</B>)
+<BR>
+<HR WIDTH="100%">
+<BR>&nbsp;
+<TABLE BORDER WIDTH="100%" >
+<CAPTION>Fichiers</CAPTION>
+
+<TR>
+<TD>-<B><A HREF="#clrdata">clrdata</A></B> fichier</TD>
+
+<TD>fichier de donn&eacute;es</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrmask">clrmask</A></B> fichier</TD>
+
+<TD>fichier de mask</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrgrid">clrgrid</A></B> fichier</TD>
+
+<TD>nom du fichier grille si les donn&eacute;es sont irr&eacute;guli&egrave;res</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrlim">clrlim</A></B> fichier</TD>
+
+<TD>nom du fichier de descriptions des limites</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrout">clrlout</A></B> fichier</TD>
+
+<TD>nom de sorties des limites calcul&eacute;es par chart</TD>
+</TR>
+</TABLE>
+&nbsp;
+<CENTER><TABLE BORDER WIDTH="100%" >
+<CAPTION>Options de calcul</CAPTION>
+
+<TR>
+<TD>-<B><A HREF="#clrmet">clrmet</A></B> [1 ou 2 ]</TD>
+
+<TD>choix de la m&eacute;thode de calcul des limites</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrint">clrint</A></B> / -<B><A HREF="#clrnoint">clrnoint</A></B></TD>
+
+<TD>Utilisation, ou non d'une m&eacute;thode d'interpolation entre les
+points de grille</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrexp">clrexp</A></B> real</TD>
+
+<TD>puissance de dix pour diviser les nombres avant affichage</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrmin">clrmin</A></B> real</TD>
+
+<TD>valeur minimale pour le calcul des limites</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#clrmax">clrmax</A></B> real</TD>
+
+<TD>valeur maximale pour le calcul des limites</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<TABLE BORDER WIDTH="100%" >
+<CAPTION>Autres options</CAPTION>
+
+<TR>
+<TD>-<B><A HREF="#clriso">clriso</A></B></TD>
+
+<TD>indique &agrave; chart de proc&eacute;der par remplissage d’isocontours</TD>
+</TR>
+
+<TR>
+<TD>-<B>clrdatamod</B></TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>-<B>clrpal</B> / -<B>clrnopal</B></TD>
+
+<TD>Affiche ou non une barre de palette</TD>
+</TR>
+
+<TR>
+<TD>-<B>clrxypal</B> xmin xmax ymin ymax</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>-<B>clrnocol</B></TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>-<B>clrdim</B></TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+-<A NAME="clrdata"></A><B>clrdata</B> <I>fichier</I>
+<BR>Sp&eacute;cifie le fichier de donn&eacute;es &agrave; colorer.
+
+<P>-<A NAME="clrmask"></A><B>clrmask</B> <I>fichier</I>
+<BR>Permet de remplacer une partie des donn&eacute;es. Les points de grille
+masqu&eacute;s sont remplac&eacute;s par une valeur sp&eacute;ciale et
+ne sont pris pas en compte lors des calculs. (voir aussi -mask, page 4)
+
+<P>-<A NAME="clrgrid"></A><B>clrgrid</B> <I>fichier</I>
+<BR>Permet de traiter des donn&eacute;es dont la grille est irr&eacute;guli&egrave;re.
+Le fichier de grille contient coordonn&eacute;es de chaque point sp&eacute;cifi&eacute;
+par -clrdata. (voir aussi -grid, page 4)
+
+<P>-<A NAME="clrlim"></A><B>clrlim</B> <I>fichier</I>
+<BR>Les limites seront lues dans ce fichier au lieu d’&ecirc;tre calcul&eacute;es.
+Le fichier de limites doit d&eacute;finir au minimum le nombre de couleurs
+dans la palette plus 1. Si plus de limites sont d&eacute;finies, elles
+ne seront pas utilis&eacute;es.
+
+<P>-<A NAME="clrout"></A><B>clrout</B> <I>fichier</I>
+<BR>Lorsque les limites sont calcul&eacute;es par chart, cette option permet
+de les r&eacute;cup&eacute;rer dans un fichier. Attention, cette option
+&eacute;crasera le fichier donn&eacute; en argument s’il existe d&eacute;j&agrave;.
+
+<P>
+<HR WIDTH="100%">
+<BR>-<A NAME="clrmet"></A><B>clrmet</B> [<I>1</I> ou <I>2</I>]
+<BR>Deux m&eacute;thodes de calcul des limites sont disponibles.
+<BR>&nbsp;M&eacute;thode 1 : chart trouve les valeurs minimale et maximale
+du champ de donn&eacute;es et divise la plage de valeurs par le nombre
+de couleurs (m&eacute;thodes lin&eacute;aire).
+<BR>&nbsp;M&eacute;thode 2 : chart proc&egrave;de par &eacute;galisation
+; de fa&ccedil;on &agrave; attribuer une quantit&eacute; &eacute;gale de
+points de grille &agrave; chaque couleur (m&eacute;thode &eacute;galis&eacute;e).
+
+<P>&nbsp;Il est aussi possible de forcer les limites &agrave; certaines
+valeurs au moyen d’un fichier. (voir aussi l’option -<B><A HREF="#clrmin">clrmin</A></B>)
+
+<P>-<A NAME="clrint"></A><B>clrint/-<A NAME="clrnoint"></A>clrnoint</B>
+<BR>Comme la distance entre deux points de grille peut devenir importante
+lors d’un zoom, chaque point est alors repr&eacute;sent&eacute; par un
+carr&eacute; large de plusieurs pixels. L’option -clrint indique &agrave;
+chart de calculer les pixels enter les points par interpolation. Le r&eacute;sultat
+sera alors plus lisse. -<B>clrint</B> Est l’option utilis&eacute;e par
+d&eacute;faut. Utilisez -<B>clrnoint</B> pour avoir une repr&eacute;sentation
+exacte de vos donn&eacute;es. Voir l’exemple ci-dessous.
+
+<P>-<A NAME="clrexp"></A><B>clrexp</B> <I>real</I>
+<BR>Lorsque des donn&eacute;es sont d’un ordre de grandeur &eacute;lev&eacute;
+ou tr&egrave;s petit, cela peut causer des probl&egrave;mes d’espace sous
+la barre de palette. -<B>clrexp</B> utilise une puissance de dix par laquelle
+chart divisera les nombres avant de les afficher. Un format appropri&eacute;
+peut alors &ecirc;tre utilis&eacute; (voir l’option -<B>format</B>, section
+7.2) et l’&eacute;chelle peut &ecirc;tre indiqu&eacute;e sous la barre
+de palette au moyen de l’option -<B>string</B> (section 7.2). Par exemple
+:
+
+<P>&nbsp;pourrait &ecirc;tre modifi&eacute; avec les options : -<B>clrexp</B>
+3 -format PALETTE f10.2
+
+<P>-<A NAME="clrmin"></A><B>clrmin/-<A NAME="clrmax"></A>clrmax</B> real
+<BR>Valeurs minimale et maximale entre lesquelles on d&eacute;sire que
+le calcul des limites s’effectue. Les autres valeurs satureront aux couleurs
+extr&ecirc;mes de la palette. Il est possible de ne pr&eacute;ciser que-<B>clrmin</B>
+ou -<B>clrmax</B>.
+
+<P>
+<HR WIDTH="100%">
+<BR>-<A NAME="clriso"></A><B>clriso</B>
+<BR>La couleur est normalement produite en colorant chaque pixel de la
+carte. Cette m&eacute;thode est rapide lors des calculs, mais a comme inconv&eacute;nient
+de cr&eacute;er d’&eacute;normes fichiers postscript &agrave; l’impression.
+L’option -clriso indique &agrave; chart de proc&eacute;der par remplissage
+d’isocontours. Le temps de calcul est multipli&eacute; par quatre ou cinq,
+mais le r&eacute;sultat est plus lisse et le postscript cr&eacute;&eacute;
+peut &ecirc;tre jusqu’&agrave; 30 fois plus petit.
+
+<P>&nbsp;note : cette option cr&eacute;e parfois des r&eacute;sultats "bizarres"
+si elle est utilis&eacute;e avec une projection CE (cylindrique &eacute;quidistante).
+Il s’agit d’un bug NCAR incontournable.
+
+<P>-<A NAME="clrdatamod"></A><B>clrdatamod</B>
+<BR>Cette option est une alternative &agrave; -clrdata. Les donn&eacute;es
+pour la couleur proviendront d’un module des vecteurs plut&ocirc;t que
+d’un ficheir de donn&eacute;es. Il faut, bien entendu, que des donn&eacute;es
+soient sp&eacute;fici&eacute;es avec l’option -vecdata.
+
+<P>-<A NAME="clrpal"></A><B>clrpal</B>/-<A NAME="clrnopal"></A><B>clrnopal</B>
+<BR>Affiche ou non une barre de palette. (-clrpal est l’option par d&eacute;faut)
+
+<P>-<A NAME="clrxypal"></A><B>clrxypal</B>
+<BR>D&eacute;termine le rectangle dans lequel sera dessin&eacute;e la barre
+de palette. Le cadre est donn&eacute; en coordonn&eacute;es "plot frame",
+entre 0.0 et 1.0.
+<BR>&nbsp;Syntaxe : -clrxypal xmin xmax ymin ymax
+
+<P>-<A NAME="clrnocol"></A><B>clrnocol</B>
+<BR>Cette option emp&ecirc;che le trac&eacute; des donn&eacute;es color&eacute;es.
+<BR>&nbsp;Surtout utilis&eacute;e en interne par chart pour la coloration
+des vecteurs (section 6.2) et pour les fichiers de configuration (section
+8.2).
+<BR>&nbsp;Par exemple, si les vecteurs sont color&eacute;s selon un scalaire
+donn&eacute; par -<B>clrdata</B>, il peut &ecirc;tre utile de ne pas tracer
+le scalaire en question.
+
+<P>-<B>clrdim</B>
+<BR>Lorsque le fichier de donn&eacute;es comporte plus d’une dimension,
+cette option sp&eacute;cifie la dimension &agrave; dessiner. Voir la section
+8.3 sur le format BIMG. -<B>clrdim</B> s&eacute;lectionne une dimension
+parmi ndim.
+<BR>&nbsp;
+</BODY>
+</HTML>

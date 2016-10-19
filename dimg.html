@@ -1,0 +1,211 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.77 [en] (X11; U; Linux 2.4.3-20mdk i686) [Netscape]">
+   <meta name="AUTHOR" content="Jean-Marc">
+   <meta name="CREATED" content="20011123;14065100">
+   <meta name="CHANGEDBY" content="Jean-Marc">
+   <meta name="CHANGED" content="20011123;17344700">
+</head>
+<body>
+
+<h1>
+Le format DIMG</h1>
+<span STYLE="text-decoration: none"><span STYLE="font-weight: medium">Le
+format dimg a &eacute;t&eacute; d&eacute;velopp&eacute; pour le projet
+CLIPPER afin d'&eacute;tendre le concept du format <a href="bimg.html">bimg</a>
+&agrave; des fichiers d'acces direct, seuls utiles pour des simulations
+tournant sur ordinateur massivement parrallele en m&eacute;moire distribu&eacute;e.</span></span>
+
+<p STYLE="font-weight: medium; text-decoration: none">Ce format a l'avantage
+d'&ecirc;tre compact et pratiquement autodescriptif (si on se limite &agrave;
+des grilles r&eacute;guli&egrave;res). On retrouve a peu de choses pr&eacute;s
+les &eacute;l&eacute;ments qui composent un fichier bimg, mais sous une
+forme d'acces direct.
+
+<p STYLE="font-weight: medium; text-decoration: none">Chaque fichier bimg
+est un fichier de type binaire, 'unformatted', &agrave; acc&egrave;s direct.
+Le premier record est r&eacute;serv&eacute; pour une ent&ecirc;te qui contient
+l'info concernant le fichier, ( en particulier la longueur en octets des
+records) puis &agrave; partir du record 2, les donn&eacute;es sont stock&eacute;es,
+1 champs 2D/record.
+
+<p STYLE="font-weight: medium; text-decoration: none">Plutot q'un long
+discours, je propose de de commenter un programme f77 lisant un fichier
+dimg, pour expliquer le format:
+<br>&nbsp;
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PROGRAM dimg_demo_lec</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IMPLICIT NONE</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER jpi,jpj,jpk,jpt,jpdim</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PARAMETER (jpi=100,jpj=100,jpk=20)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PARAMETER (jpt=100,jpdim=2)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CHARACTER*80 comment1</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CHARACTER*4 cVER</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER irecl, irec</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER ni,nj,nk,nt,ndim ! Real dimension of the fields</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL x1, y1, dx, dy , spval ! x1 = x of point(1,1)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! y1 = y of point (1,1)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! dx = x-grid spacing</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! dy = y-grid spacing</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! spval : missing/bad/masked</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! values are supposed spval</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL dep(jpk) ! array for vertical dep</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL time(jpt) ! array for times</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAL ptab(jpi,jpj,jpk,jpt,jpdim) ! data array</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! In application it can be</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C ! only 2D (jpi,jpj)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C various</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER numdimg ! logical unit for dimgfile</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INTEGER ji,jj,jk,jt,jdim ! loop counter</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>CCC</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>CC Open file the first time with dummy record length:</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>CC</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; numdimg=10</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OPEN(numdimg,FILE='dimgfile',</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . FORM ='UNFORMATTED',</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . ACCESS ='DIRECT',</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . RECL =88)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numdimg,REC=1) cVER,comment1,irecl</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLOSE(numdimg)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IF ( cVER .NE. '@!01' ) THEN</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PRINT *,' This file is not DIMG file'</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STOP</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END IF</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OPEN(numdimg,FILE='dimgfile',</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . FORM ='UNFORMATTED',</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . ACCESS ='DIRECT',</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . RECL =irecl)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numdimg,REC=1) cVER,comment1,irecl,</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . ni,nj,nk,nt,ndim,</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . x1,y1,dx,dy,spval,</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . (dep(jk),jk=1,nk),</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp; . (time(jt),jt=1,nt)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Enter the time loop</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO jt = 1, nt</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C enter vertical loop</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO jk=1,nk</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C at each level, many 'dimensions' can exists e.g. u,v,w for 3d vector</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO jdim = 1,ndim</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C compute record number corresponding to (jt,jk,jdim):</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; irec = 2 + (jt -1)*nk*ndim + (jk -1 )*ndim + (jdim -1)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Note that the i,j loops are implicit: ! rec hold 1 2D field.</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ(numdimg,REC=irec)(( ptab(ji,jj,jk,jt,jdim),ji=1,ni),jj=1,nj)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C IF we use only 2D array, this is the place to work with the current</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C 2D field at ime jt, dep jk and dim jdim ...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre><font face="Courier, monospace"><font size=+2>C...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END DO</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END DO</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END DO</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLOSE(numdimg)</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>C Now enjoy working with ptab ...</font></font></pre>
+
+<pre STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Courier, monospace"><font size=+2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END</font></font></pre>
+&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+
+<p STYLE="margin-bottom: 0cm; font-weight: medium; text-decoration: none"><font face="Times, serif"><font size=-1>Le
+format dimg est donc tres simple &agrave; lire ou &agrave; &eacute;crire.
+Si l'on travaille avec une grille irr&eacute;guli&egrave;re, on d&eacute;finit
+cette grille dans un fichier <font color="#FF3333">bimg</font> ind&eacute;pendant
+&aacute; 1 niveau, 2 dim qui contient comme donn&eacute;es, sur la dimension
+1, les valeurs x(ji,jj) et sur la dimension 2 les valeurs y(ji,jj).</font></font>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

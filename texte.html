@@ -1,0 +1,94 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="Anne de Miranda">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (Win95; I) [Netscape]">
+   <TITLE>texte</TITLE>
+</HEAD>
+<BODY TEXT="#993300" BGCOLOR="#FFFFCC" LINK="#000066" VLINK="#551A8B" ALINK="#3366FF">
+
+<CENTER>
+<H1>
+Ajouter du&nbsp;<A NAME="Texte"></A>Texte d'information</H1></CENTER>
+
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><TABLE BORDER WIDTH="66%" >
+<TR>
+<TD>-<B><A HREF="#cntilb">cntilb</A></B> integer</TD>
+
+<TD>Choisit le type de cadre autour du texte d’information</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#cntilc">cntilc</A></B> integer</TD>
+
+<TD>&nbsp;Index de la couleur du texte d’information</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#cntilxy">cntilxy</A></B> real real</TD>
+
+<TD>Coordonn&eacute;es en X et Y du texte d’information</TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#cntilp">cntilp</A></B> integer</TD>
+
+<TD>D&eacute;termine le point d&eacute;crit par les coordonn&eacute;es
+de <B>–cntilxy</B></TD>
+</TR>
+
+<TR>
+<TD>-<B><A HREF="#cntilt">cntilt</A></B> string</TD>
+
+<TD>Cha&icirc;ne du texte d’information</TD>
+</TR>
+</TABLE></CENTER>
+
+
+<P>Le texte d’information est la cha&icirc;ne de caract&egrave;res qui
+indique habituellement les valeurs des isocontours minimum et maximum,
+ainsi que l’intervalle entre les isocontours. Cette cha&icirc;ne peut &ecirc;tre
+modifi&eacute;e et plusieurs variables peuvent &ecirc;tre utilis&eacute;es.
+<BR>Voir &agrave; ce sujet la page 404 du document &laquo; Contouring and
+Mapping Tutorial &raquo;.
+
+<P>-<A NAME="cntilb"></A><B>cntilb</B> integer
+<BR>Information Label Box flag. (ILB)
+<BR>Choisit le type de cadre autour du texte d’information
+<BR>&nbsp;
+<BR>&nbsp;0 – aucun cadre
+<BR>&nbsp;1 – seul un p&eacute;rim&egrave;tre est dessin&eacute; autour
+du texte. (m&ecirc;me couleur que le texte.)
+<BR>&nbsp;2 – une bo&icirc;te de couleur (index LBC) est dessin&eacute;e
+autour du texte.
+<BR>&nbsp;3 – 1 et 2, soit une bo&icirc;te de couleur avec un cadre.
+
+<P>-<A NAME="cntilc"></A><B>cntilc</B> integer
+<BR>Index Label Color (ILC)
+<BR>Index de la couleur du texte d’information. (Une couleur sp&eacute;ciale
+dont l’index est entre 10 et 19 peut &ecirc;tre utilis&eacute;e, voir section
+8.1)
+
+<P>-<A NAME="cntilxy"></A><B>cntilxy</B> real real
+<BR>Coordonn&eacute;es en X et Y du texte d’information, exprim&eacute;es
+en unit&eacute; &laquo; plot frame &raquo; entre 0.0 et 1.0.
+<BR>Voir <B>–cntilp</B> ci-dessous pour savoir &agrave; quel point du texte
+correspondent ces coordonn&eacute;es.
+
+<P>-<A NAME="cntilp"></A><B>cntilp</B> integer
+<BR>Information Label Positionning flag. (ILP)
+<BR>D&eacute;termine le point d&eacute;crit par les coordonn&eacute;es
+de <B>–cntilxy</B>. (d&eacute;faut 4)
+
+<P>-<A NAME="cntilt"></A><B>cntilt</B> string
+<BR>Information Label Text (ILT)
+<BR>Cha&icirc;ne du texte d’information. Plusieurs variables peuvent &ecirc;tre
+utilis&eacute;es dans cette cha&icirc;ne, r&eacute;f&eacute;rez-vous &agrave;
+la page 404 du document &laquo; Contouring and Mapping Tutorial &raquo;.
+<BR>&nbsp;d&eacute;faut : Contours de $CMN$ a $CMX$ par intervalles de
+$CIU$
+<BR>&nbsp;
+</BODY>
+</HTML>
