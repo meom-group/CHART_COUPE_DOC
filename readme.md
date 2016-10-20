@@ -3,11 +3,11 @@
 
 # flowchart 
 
-index.html ---> chart_mail.html ( with frames)
-                      --> chart_title.html : cover page
-                      --> chart.html  : left hand side frame
-                         --> chart_index.html : summary of chart options
-                         --> chart_manual.html : the proper chart manual
+index.html ---> chart_mail.html ( with frames)  
+                      --> chart_title.html : cover page  
+                      --> chart.html  : left hand side frame  
+                         --> chart_index.html : summary of chart options  
+                         --> chart_manual.html : the proper chart manual  
 # TODO list
  * Rewrite the manual in English ( provide the choice on the front page)
  * Finish the coupe manual
