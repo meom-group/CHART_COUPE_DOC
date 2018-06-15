@@ -130,7 +130,7 @@ Les sections suivantes d&eacute;crivent en d&eacute;tail les options associ&eacu
 &agrave; chaque bloc, ainsi que les diff&eacute;rents formats de fichiers.
 <br>&nbsp;
 <h1>
-2.&nbsp;<a NAME="Options générales"></a>Options g&eacute;n&eacute;rales</h1>
+2.&nbsp;<a NAME="Options gÃ©nÃ©rales"></a>Options g&eacute;n&eacute;rales</h1>
 Cette section d&eacute;crit les quelques options qui s'appliquent &agrave;
 l'ensemble du dessin et non &agrave; un seul bloc.
 <br>&nbsp;
@@ -350,8 +350,26 @@ le facteur d'&eacute;chelle est appliqu&eacute; avant la correction de la moyenn
 Si l'option  <a href="#-scale">-<b>scale</b></a> est aussi utilis&eacute;e, le facteur d'&eacute;chelle est appliqu&eacute; avant le
 calcul du log10. Afin de ne pas poser de probl&egrave;mes, les valeurs n&eacute;gatives ne sont pas trac&eacute;es.
 </tr>
+   
+<tr>
+<td VALIGN=TOP><a NAME="-low"></a><b>-low</b> </td>
 
+<td>Avec cette option, le  champ lu dans le fichier d'entr&eacute;e est modifi&eacute; pour contraster les valeurs faibles avant de faire le plot. 
+Si l'option  <a href="#-scale">-<b>scale</b></a> est aussi utilis&eacute;e, le facteur d'&eacute;chelle est appliqu&eacute; avant le
+calcul. Afin de ne pas poser de probl&egrave;mes, les valeurs n&eacute;gatives ne sont pas trac&eacute;es. En effet
+l'op&eacute;rateur utilis&eacute; est une double racine carr&eacute;e. Cette option est faite pour representer l'option Low de 
+ncview.
+</tr>
 
+<tr>
+<td VALIGN=TOP><a NAME="-hig"></a><b>-hig</b> </td>
+
+<td>Avec cette option, le  champ lu dans le fichier d'entr&eacute;e est modifi&eacute; pour contraster les valeurs fortes avant de faire le plot. 
+Si l'option  <a href="#-scale">-<b>scale</b></a> est aussi utilis&eacute;e, le facteur d'&eacute;chelle est appliqu&eacute; avant le
+calcul. Afin de ne pas poser de probl&egrave;mes, les valeurs n&eacute;gatives ne sont pas trac&eacute;es. En effet
+l'op&eacute;rateur utilis&eacute; est une puissance 4. Cette option est faite pour representer l'option High de 
+ncview.
+</tr>
 
 
 <tr>
@@ -509,7 +527,7 @@ avec la palette d&eacute;finie &agrave; l'index 2. (d&eacute;faut -<b>map</b>)&n
 
 <td>L'option -<b>hi</b> permet de sp&eacute;cifier une base de donn&eacute;es continents &agrave; haute
 r&eacute;solution, disponible dans NCARG 4.3, (Earth..1). Par d&eacute;faut, on utilise la version basse
-r&eacute;solution, ce qui correspond à l'option -<b>lo</b>.  &nbsp;</td>
+r&eacute;solution, ce qui correspond Ã  l'option -<b>lo</b>.  &nbsp;</td>
 </tr>
 
 <tr>
@@ -761,7 +779,7 @@ Le r&eacute;sultat sera alors plus lisse.&nbsp;
 <p>-<b>clrint</b> est l'option utilis&eacute;e par d&eacute;faut. Utilisez
 -<b>clrnoint</b> pour avoir une repr&eacute;sentation exacte de vos donn&eacute;es. Cepandant,
 notez que si on utilise une grille irr&eacute;guli&egrave;re (option -<b>grid</b> ou -<b>gridxy</b>) alors les donn&eacute;es
-sont interpol&eacute;es sur une grille r&eacute;gulière. Pour voir les donn&eacute;es brutes dans le cas d'une grille irr&eacute;guli&egrave;re, utiliser la combinaison <a href="#-noproj">-<b>noproj</b></a> avec -<b>noint</b>, sans option -<b>grid</b>&nbsp;
+sont interpol&eacute;es sur une grille r&eacute;guliÃ¨re. Pour voir les donn&eacute;es brutes dans le cas d'une grille irr&eacute;guli&egrave;re, utiliser la combinaison <a href="#-noproj">-<b>noproj</b></a> avec -<b>noint</b>, sans option -<b>grid</b>&nbsp;
 <br><img SRC="images/exemple_p10.JPG" height=386 width=690></td>
 </tr>
 
